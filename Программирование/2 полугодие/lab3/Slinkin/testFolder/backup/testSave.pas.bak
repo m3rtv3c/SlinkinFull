@@ -1,0 +1,55 @@
+unit testSave;
+
+{$mode ObjFPC}
+interface
+type
+  TStringArray = array of AnsiString;
+
+  TPerson = record
+    fio: AnsiString;
+    gender: AnsiString;
+    birth: AnsiString;
+    id: AnsiString;
+    children: TStringArray;
+  end;
+
+  TPeopleArray = array of TPerson;
+
+//Класс БД
+  TPersonDatabaseStream = class
+  private
+    FPeople: TPeopleArray;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure AddPerson(const P: TPerson);
+    function Count: Integer;
+    function GetPerson(Index: Integer): TPerson;
+    procedure Clear;
+
+    procedure SaveToStream(Stream: TStream);
+    procedure LoadFromStream(Stream: TStream);
+  end;
+
+//Хранение в памяти(в буфере_
+  TMemoryDatabaseStream = class(TStream)
+  private
+    FBuffer: array of Byte;
+    FPosition: Int64;
+  public
+    constructor Create;
+    function Read(var Buffer; Count: LongInt): LongInt; override;
+    function Write(const Buffer; Count: LongInt): LongInt; override;
+    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
+    procedure Clear;
+    function Size: Int64;
+  end;
+
+uses
+  Classes, SysUtils;
+
+implementation
+
+end.
+

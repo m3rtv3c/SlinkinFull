@@ -1,0 +1,407 @@
+unit Unit1;
+
+{$mode objfpc}{$H+}
+{$R *.lfm}
+
+interface
+
+uses
+  Classes, SysUtils, Math, LResources, Forms, Controls, Graphics, Dialogs,
+  ExtCtrls, StdCtrls, Spin, ColorBox, uPSComponent, uPSUtils, uPSRuntime,
+  IpHtml, IpFileBroker;
+
+type
+
+  { TForm1 }
+
+  TForm1 = class(TForm)
+    Button1: TButton;
+    ColorBox1: TColorBox;
+    IpHtmlPanel1: TIpHtmlPanel;
+    PSScript1: TPSScript;
+    tEditFormula: TEdit;
+    fsEditX: TFloatSpinEdit;
+    fsEditY: TFloatSpinEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    pbMain: TPaintBox;
+    Panel1: TPanel;
+    procedure Button1Click(Sender: TObject);
+    procedure ColorBox1Change(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure fsEditXChange(Sender: TObject);
+    procedure fsEditYChange(Sender: TObject);
+    procedure IpHtmlPanel1Click(Sender: TObject);
+    procedure Label1Click(Sender: TObject);
+    procedure Label2Click(Sender: TObject);
+    procedure Label3Click(Sender: TObject);
+    procedure pbMainPaint(Sender: TObject);
+    procedure PSScript1Compile(Sender: TPSScript);
+    procedure PSScript1Execute(Sender: TPSScript);
+  private
+    FCurrentX: Double; //Текущий X
+    FMinW, FMinH: Integer; //Минимальная высота и длина
+    FIsCompiled: Boolean;  //Скомпилирован ли скрипт
+    FLastFormula: string;  //последняя фрмула
+    procedure DrawGraph;
+    procedure RegisterMathFunctions;
+  public
+    function EvaluateFunction(X: Double): Double;
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{ TForm1 }
+
+//Обертки мат.функций для скрипта
+function ps_sin(x: Double): Double; begin Result := Sin(x); end;
+function ps_cos(x: Double): Double; begin Result := Cos(x); end;
+function ps_tan(x: Double): Double; begin Result := Tan(x); end;
+function ps_sqrt(x: Double): Double; begin Result := Sqrt(x); end;
+function ps_ln(x: Double): Double; begin Result := Ln(x); end;
+function ps_abs(x: Double): Double; begin Result := Abs(x); end;
+function ps_exp(x: Double): Double; begin Result := Exp(x); end;
+function ps_power(x, y: Double): Double; begin Result := Power(x, y); end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  FMinW := 598;
+  FMinH := 333;
+  Constraints.MinWidth := FMinW;
+  Constraints.MinHeight := FMinH;
+
+  ColorBox1.Selected := clRed;
+  tEditFormula.Text := 'Sin(x)';
+
+  fsEditX.Minvalue := 0.1;
+  fsEditX.MaxValue := 10;
+  fsEditY.Minvalue := 0.1;
+  fsEditY.MaxValue := 10;
+  fsEditX.Value := 5;
+  FsEditY.value := 5;
+
+  RegisterMathFunctions;
+  DrawGraph;
+
+end;
+
+procedure TForm1.fsEditXChange(Sender: TObject);
+begin
+  invalidate;
+end;
+
+procedure TForm1.fsEditYChange(Sender: TObject);
+begin
+  invalidate;
+end;
+
+procedure TForm1.IpHtmlPanel1Click(Sender: TObject);
+begin
+  IpHtmlPanel1.Visible := False;
+end;
+
+procedure TForm1.Label1Click(Sender: TObject);
+const
+  HtmlPath = 'help/formula.html';
+var
+  HtmlList: TStringList;
+begin
+  if FileExists(HtmlPath) then
+  begin
+    HtmlList := TStringList.Create;
+    try
+      HtmlList.LoadFromFile(HtmlPath);
+      IpHtmlPanel1.SetHtmlFromStr(HtmlList.Text); // Загружаем текст напрямую
+      IpHtmlPanel1.Visible := True;
+    finally
+      HtmlList.Free;
+    end;
+  end
+  else
+    ShowMessage('Файл не найден: ' + HtmlPath);
+end;
+
+procedure TForm1.Label2Click(Sender: TObject);
+  const
+  HtmlPath = 'help/scales.html';
+var
+  HtmlList: TStringList;
+begin
+  if FileExists(HtmlPath) then
+  begin
+    HtmlList := TStringList.Create;
+    try
+      HtmlList.LoadFromFile(HtmlPath);
+      IpHtmlPanel1.SetHtmlFromStr(HtmlList.Text); // Загружаем текст напрямую
+      IpHtmlPanel1.Visible := True;
+    finally
+      HtmlList.Free;
+    end;
+  end
+  else
+    ShowMessage('Файл не найден: ' + HtmlPath);
+end;
+
+procedure TForm1.Label3Click(Sender: TObject);
+const
+  HtmlPath = 'help/scales.html';
+var
+  HtmlList: TStringList;
+begin
+  if FileExists(HtmlPath) then
+  begin
+    HtmlList := TStringList.Create;
+    try
+      HtmlList.LoadFromFile(HtmlPath);
+      IpHtmlPanel1.SetHtmlFromStr(HtmlList.Text); // Загружаем текст напрямую
+      IpHtmlPanel1.Visible := True;
+    finally
+      HtmlList.Free;
+    end;
+  end
+  else
+    ShowMessage('Файл не найден: ' + HtmlPath);
+
+end;
+
+procedure TForm1.pbMainPaint(Sender: TObject);
+begin
+     DrawGraph;
+end;
+
+procedure TForm1.PSScript1Compile(Sender: TPSScript);
+begin
+  Sender.AddFunction(@ps_power, 'function pow(x, y: Double): Double;');  //Регистрируем pow
+  Sender.AddFunction(@ps_tan, 'function tan(x:Double):Double;');
+  Sender.AddFunction(@ps_ln, 'function Ln(x:Double):Double;');
+  Sender.AddFunction(@ps_exp,'function exp(x:Double):Double;');
+
+  //Добавляем переменные
+  PSScript1.AddRegisteredVariable('x', 'Double');
+  PSScript1.AddRegisteredVariable('res', 'Double');
+end;
+
+
+procedure TForm1.PSScript1Execute(Sender: TPSScript);
+var
+  pv: PPSVariant;
+begin
+  //Получаем переменную из скрипта
+  pv := Sender.GetVariable('x');
+  if pv <> nil then //Если не 0, то устанавливаем текущий x
+    VSetReal(pv, FCurrentX);
+end;
+
+
+//Регистрируем поддерживаемые функции
+procedure TForm1.RegisterMathFunctions;
+begin
+  PSScript1.AddMethod(nil, @ps_sin,   'function Sin(x: Double): Double;');
+  PSScript1.AddMethod(nil, @ps_cos,   'function Cos(x: Double): Double;');
+  PSScript1.AddMethod(nil, @ps_tan,   'function Tan(x: Double): Double;');
+  PSScript1.AddMethod(nil, @ps_sqrt,  'function Sqrt(x: Double): Double;');
+  PSScript1.AddMethod(nil, @ps_ln,    'function Ln(x: Double): Double;');
+  PSScript1.AddMethod(nil, @ps_abs,   'function Abs(x: Double): Double;');
+  PSScript1.AddMethod(nil, @ps_exp,   'function Exp(x: Double): Double;');
+end;
+
+function TForm1.EvaluateFunction(X: Double): Double;
+var
+  ScriptText: string;
+  pv: PPSVariant;
+begin
+  Result := 0;
+  //Если пустая - выходим.
+  if Trim(tEditFormula.Text) = '' then
+    Exit;
+
+  //Устанавливаем текущий X
+  FCurrentX := X;
+  //Парсим текстбокс и формируем текст скрипта
+  ScriptText := 'begin res := ' + tEditFormula.Text + '; end.';
+
+  //Передаем скрипт в движок
+  PSScript1.Script.Text := ScriptText;
+
+  if PSScript1.Compile then
+  begin
+    if PSScript1.Execute then
+    begin
+      //Присваиваем переменную res
+      pv := PSScript1.GetVariable('res');
+      if pv <> nil then
+      //Получаем результат скрипта
+        Result := VGetReal(pv);
+    end
+    else
+      ShowMessage('Ошибка выполнения');
+  end
+  else
+    ShowMessage('Ошибка компиляции');
+end;
+
+
+procedure TForm1.DrawGraph;
+var
+  i: Integer;
+  W, H, CenterX, CenterY: Integer; //Ширина, высота и координаты центра
+  x, y: Double;
+  py, PrevPY: Integer; //Пиксели
+  PixelPerUnitX, PixelPerUnitY: Double; //Масштаб пикселей
+  sLabel: string;
+  ScriptText: string;
+  pvRes: PPSVariant;
+  IsFirstPoint: Boolean;
+begin
+  //Подготовка холста, высчитываем середину по вертикали и горизонтали в зависимости от размеров paintbox
+  W := pbMain.Width;
+  H := pbMain.Height;
+  CenterX := W div 2;
+  CenterY := H div 2;
+
+  //Заливаем фон
+  pbMain.Canvas.Brush.Color := clWhite;
+  pbMain.Canvas.FillRect(0, 0, W, H);
+
+
+  //Проверка деления на 0, хотя такого и не должно случаться), но все равно
+  if (fsEditX.Value <= 0) or (fsEditY.Value <= 0) then Exit;
+
+  //Масштабирование
+  PixelPerUnitX := CenterX / fsEditX.Value;//Сколько пикселей в одной мат. единице
+  PixelPerUnitY := CenterY / fsEditY.Value;
+
+  //Оси
+  pbMain.Canvas.Pen.Color := clBlack;
+  pbMain.Canvas.Pen.Width := 1;
+  //Ось по горизонтали
+  pbMain.Canvas.Line(0, CenterY, W, CenterY);
+  //Ось по вертикали
+  pbMain.Canvas.Line(CenterX, 0, CenterX, H);
+
+  pbMain.Canvas.Font.Size := 8;
+  pbMain.Canvas.Font.Color := clGray;
+
+  //Подписи на концах всех осей
+  sLabel := FormatFloat('0.00', -fsEditX.Value);
+  pbMain.Canvas.TextOut(5, CenterY + 5, sLabel);
+  sLabel := FormatFloat('0.00', fsEditX.Value);
+  pbMain.Canvas.TextOut(W - pbMain.Canvas.TextWidth(sLabel) - 5, CenterY + 5, sLabel);
+  sLabel := FormatFloat('0.00', fsEditY.Value);
+  pbMain.Canvas.TextOut(CenterX + 5, 5, sLabel);
+  sLabel := FormatFloat('0.00', -fsEditY.Value);
+  pbMain.Canvas.TextOut(CenterX + 5, H - pbMain.Canvas.TextHeight(sLabel) - 5, sLabel);
+
+  //Компилируем только ПРИ ИЗМЕНЕНИИ
+  ScriptText := 'begin res := ' + tEditFormula.Text + '; end.';
+
+  if (FLastFormula <> ScriptText) or (not FIsCompiled) then
+  begin
+    PSScript1.Script.Text := ScriptText;
+
+    if not PSScript1.Compile then
+    begin
+      ShowMessage('Ошибка компиляции');
+      Exit;
+    end;
+
+    FLastFormula := ScriptText;  // Запоминаем успешную компиляцию
+  end;
+
+  //Получаем переменную res
+  pvRes := PSScript1.GetVariable('res');
+  if pvRes = nil then
+  begin
+    ShowMessage('Не найдена переменная res');
+    Exit;
+  end;
+
+  //Настройка линии для рисования
+  pbMain.Canvas.Pen.Color := ColorBox1.Selected;
+  pbMain.Canvas.Pen.Width := 2;
+
+  //Следующая точка = первая
+  IsFirstPoint := True;
+  PrevPY := CenterY;
+
+  //Цикл отрисовки
+  for i := 0 to W do
+  begin
+
+    //Присваиваем пиксель
+    x := (i - CenterX) / PixelPerUnitX;
+    FCurrentX := x;
+
+    if PSScript1.Execute then
+    begin
+      //Получаем результат
+      y := VGetReal(pvRes);
+
+      //Проверка на ошибки
+      if not (IsInfinite(y) or IsNaN(y)) then
+      begin
+        //Преобразовываем в пиксели чтобы найти точку
+        py := CenterY - Round(y * PixelPerUnitY);
+
+        //Проверка диапазона
+        if (py >= -H) and (py <= H * 2) then
+        begin
+          if IsFirstPoint then
+          begin
+            //Нашли первую точку
+            pbMain.Canvas.MoveTo(i, py);
+            IsFirstPoint := False;
+          end
+          else
+          begin
+            //Рисуем остальные точки
+            //Если разница по y больше высоты холста, то это разрыв
+            if Abs(py - PrevPY) > H then
+            //Перестать отрисовывать
+              pbMain.Canvas.MoveTo(i, py)
+            else
+            //В другом случае - рисуем
+              pbMain.Canvas.LineTo(i, py);
+          end;
+          //Сохраняем y для следующих итераций
+          PrevPY := py;
+        end
+        else
+        //Если точка за пределами зоны
+          IsFirstPoint := True;
+      end
+      else
+        IsFirstPoint := True;
+    end
+    else
+    //Если скрипт вернул false
+    begin
+      if i = 0 then
+        ShowMessage('Ошибка выполнения');
+      IsFirstPoint := True;
+    end;
+  end;
+end;
+
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  invalidate;
+end;
+
+procedure TForm1.ColorBox1Change(Sender: TObject);
+begin
+  invalidate;
+end;
+
+end.
+initialization
+  {$I unit1.lrs}
+
+end.
+

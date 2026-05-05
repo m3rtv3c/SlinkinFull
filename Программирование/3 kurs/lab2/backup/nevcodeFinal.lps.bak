@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <Units>
+      <Unit>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="197"/>
+        <CursorPos X="3" Y="227"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="nevcode.pas"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="nevCode"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="61"/>
+        <CursorPos X="48" Y="28"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="nevGeany.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="55"/>
+        <CursorPos X="22" Y="11"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="9">
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="13" Column="35"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="7" Column="12"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="10" Column="28"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="20" Column="37"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="210" TopLine="184"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="214" Column="34" TopLine="184"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="102" Column="50" TopLine="79"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="134" TopLine="118"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="123" Column="45" TopLine="100"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcodeFinal.lpr"/>
+        <Caret Line="214" Column="41" TopLine="197"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

@@ -1,0 +1,38 @@
+program interfacetest;
+uses unit1;
+
+IList=interface
+    // добавляет узел в начало списка
+    function addFirst(node:tobject):tobject;
+    // добавляет узел в конец списка
+    function addLast(node:tobject):tobject;
+    // удаляет узел из начала списка
+    function deleteFirst:tobject;
+    // удаляет узел после переданного узла
+    function deleteAfter(prevNode:tobject):tobject;
+    // вставляет узел после переданного узла
+    function insertAfter(prevNode:tobject; insnode:tobject):tobject;
+    // Возращает 0 при равенстве содержимого узлов
+    // Возращает 1, если содержимое node1 больше содержимого node2
+    // Возращает -1, если содержимое node1 меньше содержимого node2
+    function compare(node1,node2:tobject):integer;
+    // Перемещает внутренний указатель в начало списка, возращает первый узел списка
+    // Если список пуст, возращает nil
+    function first:tobject;
+    // Перемещает внутренний указатель на следующий узел, возвращает данный узел
+    // Если внутренний указатель вышел за пределы списка, возращает nil
+    function next:tobject;
+    // Перемещает внутренний указатель на конец списка, возвращает последний узел списка
+    // Если список пуст, возращает nil
+    function last:tobject;
+    // Визуализирует узел
+    procedure showNode(node:tobject);
+    // Создает и возвращает копию узла
+    function copyNode(node:tobject):tobject;
+    // Уничтожает содержимое списка
+    procedure destroyList;
+end;
+
+begin
+end.
+

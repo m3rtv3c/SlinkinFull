@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <Units>
+      <Unit>
+        <Filename Value="project1.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Project1"/>
+        <CursorPos X="33" Y="9"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="myunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="myUnit"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="3" Y="16"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="18" Column="39"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="38" Column="31" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="156" Column="17" TopLine="135"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="18" Column="17"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="19" Column="45"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="175" Column="15" TopLine="132"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="75" Column="35" TopLine="58"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="17"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="24" Column="50" TopLine="3"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="28" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="27" Column="58" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="28" Column="5" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="27" Column="52" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="26" Column="53" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="28" Column="53" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="27" Column="2" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="28" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="27" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="98" Column="33" TopLine="78"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="143" Column="16" TopLine="126"/>
+      </Position>
+      <Position>
+        <Filename Value="project1.lpr"/>
+        <Caret Line="6" Column="11"/>
+      </Position>
+      <Position>
+        <Filename Value="project1.lpr"/>
+        <Caret Line="13" Column="24"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="22" Column="52"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="75" Column="45" TopLine="55"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="41" Column="58" TopLine="20"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="40" TopLine="20"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="56" TopLine="79"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="13" Column="37"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="12" Column="33"/>
+      </Position>
+      <Position>
+        <Filename Value="myunit.pas"/>
+        <Caret Line="29" TopLine="13"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode="default">
+        <Mode Name="default">
+          <local>
+            <LaunchingApplication Use="True"/>
+          </local>
+        </Mode>
+      </Modes>
+    </RunParams>
+    <HistoryLists>
+      <List Name="WorkingDirectory" Type="File" Count="1"/>
+      <List Name="LaunchingApplication" Type="File" Count="1">
+        <Item1 Value="/usr/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </List>
+      <List Name="CommandLineParameters" Count="1"/>
+    </HistoryLists>
+  </ProjectSession>
+</CONFIG>

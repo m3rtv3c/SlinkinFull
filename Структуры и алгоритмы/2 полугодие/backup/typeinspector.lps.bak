@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <Units>
+      <Unit>
+        <Filename Value="typeinspector.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="TypeInspector"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="325"/>
+        <CursorPos X="40" Y="340"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="183" Column="55" TopLine="174"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="159" Column="61" TopLine="148"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="76" TopLine="67"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="60" Column="69" TopLine="47"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="63" Column="40" TopLine="47"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="39" Column="62" TopLine="20"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="30" Column="33" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="32" Column="7" TopLine="8"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="39" Column="3" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="240" Column="66" TopLine="226"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="34" Column="22" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="5" Column="20"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="10" Column="66"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="18" TopLine="4"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="50" Column="26" TopLine="14"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="30" Column="33" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="34" Column="48" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="27" Column="28" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="29" Column="32" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="24" Column="13" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="18"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="53" Column="39" TopLine="35"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="51" Column="69" TopLine="35"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="318" Column="37" TopLine="290"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="367" Column="5" TopLine="339"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="359" Column="38" TopLine="335"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="352" Column="40" TopLine="336"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="351" Column="34" TopLine="335"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="335" Column="31" TopLine="325"/>
+      </Position>
+      <Position>
+        <Filename Value="typeinspector.lpr"/>
+        <Caret Line="5" Column="11"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode="default">
+        <Mode Name="default">
+          <local>
+            <LaunchingApplication Use="True"/>
+          </local>
+        </Mode>
+      </Modes>
+    </RunParams>
+    <HistoryLists>
+      <List Name="LaunchingApplication" Type="File" Count="1">
+        <Item1 Value="/usr/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </List>
+    </HistoryLists>
+  </ProjectSession>
+</CONFIG>

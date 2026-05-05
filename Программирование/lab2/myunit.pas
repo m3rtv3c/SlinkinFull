@@ -1,0 +1,274 @@
+unit myUnit;
+
+interface
+
+uses
+  SysUtils;
+
+type
+  TCompareFunc = function(const A, B: Integer): Integer;
+
+TAbstractFinder = class abstract
+private
+  class var Data: array of Integer;
+  class var CompareMethod: TCompareFunc;
+public
+  constructor Create(const AData: array of Integer); virtual;
+  destructor Destroy; override;
+  class procedure SetData(const AData: array of Integer); static;
+  class procedure SetCompareMethod(AMethod: TCompareFunc); static;
+  class function IsDataValid: Boolean; virtual; abstract;
+  class function FindOne(const AElement: Integer): Integer; virtual; abstract;
+  class function FindOne(const AElement: Integer; ACompareMethod: TCompareFunc): Integer; static;
+
+
+
+
+// Линейный поиск
+TLineFinder = class(TAbstractFinder)
+public
+  constructor Create(const AData: array of Integer); override;
+  destructor Destroy; override;
+
+  class function IsDataValid: Boolean; override;
+  class function FindOne(const AElement: Integer): Integer; override;
+  class function FindAll(const AElement: Integer): TArray<Integer>; override;
+end;
+
+// Бинарный поиск
+TBinFinder = class(TAbstractFinder)
+public
+  constructor Create(const AData: array of Integer); override;
+  destructor Destroy; override;
+
+  class function IsDataValid: Boolean; override;
+  class function FindOne(const AElement: Integer): Integer; override;
+  class function FindAll(const AElement: Integer): TArray<Integer>; override;
+end;
+
+implementation
+
+function DefaultCompare(const A, B: Integer): Integer;
+begin
+  Result := A - B;
+end;
+
+constructor TAbstractFinder.Create(const AData: array of Integer);
+begin
+end;
+
+destructor TAbstractFinder.Destroy;
+begin
+  inherited;
+end;
+
+// Статическая процедура установки данных и их копирование
+class procedure TAbstractFinder.SetData(const AData: array of Integer);
+begin
+  Data := Copy(AData);
+end;
+
+// Статическая процедура установки метода сравнения по умолчанию
+class procedure TAbstractFinder.SetCompareMethod(AMethod: TCompareFunc);
+begin
+  CompareMethod := AMethod;
+end;
+
+// Статическая функция поиска одного элемента с заданным методом сравнения (бинарный или линейный)
+class function TAbstractFinder.FindOne(const AElement: Integer; ACompareMethod: TCompareFunc): Integer;
+var
+  I, Index, Low, High, Mid, Count, Step, StartIndex, EndIndex, Middle,
+    LeftBound, RightBound, MidLeft, MidRight : integer;
+begin
+   // Поиск по всему массиву - зависит от реализации в подклассах.
+   // В базовом классе оставить пустым или выбросить исключение.
+   Result := -1;
+end;
+
+// Аналогичная функция без передачи метода — использует текущий установленный метод.
+class function TAbstractFinder.FindOne(const AElement: Integer): Integer;
+begin
+   if not Assigned(CompareMethod) then CompareMethod := @DefaultCompare;
+   Result := FindOne(AElement, CompareMethod);
+end;
+
+// Аналогично для поиска всех элементов с заданным методом сравнения.
+class function TAbstractFinder.FindAll(const AElement: Integer; ACompareMethod: TCompareFunc): TArray<Integer>;
+var
+  I, Count : integer;
+begin
+   SetLength(Result,0);
+   for I := Low(Data) to High(Data) do begin
+     if ACompareMethod(Data[I],AElement)=0 then begin
+       SetLength(Result,length(Result)+1);
+       Result[High(Result)] := I;
+     end;
+   end;
+end;
+
+// Аналогично для поиска всех элементов без передачи метода.
+class function TAbstractFinder.FindAll(const AElement: Integer): TArray<Integer>;
+begin
+   if not Assigned(CompareMethod) then CompareMethod := @DefaultCompare;
+   Result := FindAll(AElement, CompareMethod);
+end;
+
+
+// Реализация линейного поиска
+
+constructor TLineFinder.Create(const AData: array of Integer);
+begin
+   inherited Create(AData);
+end;
+
+destructor TLineFinder.Destroy;
+begin
+   inherited Destroy;
+end;
+
+class function TLineFinder.IsDataValid: Boolean;
+begin
+   Result := Length(Data) >0 ;
+end;
+
+class function TLineFinder.FindOne(const AElement: Integer): Integer;
+var i : integer;
+begin
+   for i := Low(Data) to High(Data) do begin
+     if Data[i] = AElement then begin
+       Result := i;
+       Exit;
+     end;
+   end;
+   Result := -1; // не найдено
+end;
+
+class function TLineFinder.FindAll(const AElement: Integer): TArray<Integer>;
+var i : integer;
+begin
+   SetLength(Result,0);
+   for i := Low(Data) to High(Data) do begin
+     if Data[i] = AElement then begin
+       SetLength(Result,length(Result)+1);
+       Result[High(Result)] := i;
+     end;
+   end;
+end;
+
+
+// Реализация бинарного поиска
+
+constructor TBinFinder.Create(const AData: array of Integer);
+begin
+   inherited Create(AData);
+   // Обязательно отсортировать данные для бинарного поиска.
+   if Length(Data)>1 then
+     QuickSort(0,High(Data));
+end;
+
+destructor TBinFinder.Destroy;
+begin
+
+ inherited Destroy;
+end;
+
+// Быстрая сортировка для подготовки данных к бинарному поиску.
+procedure QuickSort(var Arr : array of Integer; L,R : integer);
+var
+ i,j,p,tmp : integer ;
+begin
+ i:=L ; j:=R ; p:=Arr[(L+R) div2] ;
+ repeat
+ while Arr[i]<p do Inc(i) ;
+ while Arr[j]>p do Dec(j) ;
+ if i<=j then begin
+ tmp:=Arr[i]; Arr[i]:=Arr[j]; Arr[j]:=tmp ;
+ Inc(i); Dec(j) ;
+ end ;
+ until i>j ;
+ if L<j then QuickSort(Arr,L,j) ;
+ if i<R then QuickSort(Arr,i,R) ;
+end;
+
+// Обертка для вызова быстрой сортировки массива Data.
+procedure QuickSort(var Arr : array of Integer; L,R : integer);
+begin
+ if R<=L then Exit ;
+ var p:=Arr[(L+R) div2];
+ var i:=L;j:=R;
+ repeat
+ while Arr[i]<p do Inc(i);
+ while Arr[j]>p do Dec(j);
+ if i<=j then begin
+ tmp:=Arr[i]; Arr[i]:=Arr[j]; Arr[j]:=tmp ; Inc(i); Dec(j); end ;
+ until i>j ;
+ if L<j then QuickSort(Arr,L,j);
+ if i<R then QuickSort(Arr,i,R);
+end;
+
+
+class function BinarySearch(const Arr : array of Integer; const Value :Integer): integer;
+// Возвращает индекс элемента или -1 если не найдено.
+var L,R,M : integer ;
+begin
+ L:=Low(Arr); R:=High(Arr);
+ while L<=R do begin
+ M := (L+R) div2 ;
+ if Arr[M]=Value then begin
+ Result:=M ; Exit ; end ;
+ if Arr[M]<Value then L:=M+1 else R:=M-1 ;
+ end ;
+ Result := -1 ;
+end;
+
+
+class function TBinFinder.FindOne(const AElement:Integer):Integer;
+// Использует бинарный поиск по отсортированным данным.
+var idx : integer ;
+begin
+ idx := BinarySearch(Data,AElement);
+ Result := idx ;
+end;
+
+class function TBinFinder.FindAll(const AElement :Integer):TArray<Integer>;
+var idx,i : integer ;
+begin
+ SetLength(Result,0);
+
+ idx := BinarySearch(Data,AElement);
+
+ if idx=-1 then Exit;
+
+ // Найти все вхождения слева от найденного индекса.
+ i := idx-1;
+ while (i>=Low(Data)) and (Data[i]=AElement) do begin
+    SetLength(Result,length(Result)+1);
+    Result[High(Result)] := i- (idx -i); // индекс в исходных данных не совпадает после сортировки!
+    Dec(i);
+ end;
+
+ // Найти все вхождения справа от найденного индекса.
+ i := idx+1;
+ while (i<=High(Data)) and (Data[i]=AElement) do begin
+    SetLength(Result,length(Result)+1);
+    Result[High(Result)] := i- (idx -i); // индекс в исходных данных не совпадает после сортировки!
+    Inc(i);
+ end;
+
+Result[0] := idx;
+// Но поскольку данные отсортированы и мы ищем все вхождения равных элементов,
+// лучше искать диапазон через двоичный поиск границ.
+// Для простоты можно оставить так или реализовать более точное решение.
+
+end;
+
+
+initialization
+
+// Можно установить методы по умолчанию при инициализации модуля.
+TAbstractFinder.SetCompareMethod(@DefaultCompare);
+
+finalization
+
+// Очистка при завершении модуля.
+

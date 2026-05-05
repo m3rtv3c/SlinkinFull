@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <Units>
+      <Unit>
+        <Filename Value="memcontrol.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="39"/>
+        <CursorPos X="19" Y="121"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="test.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Unit1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="15"/>
+        <CursorPos X="27" Y="22"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="21">
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="19" Column="49" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="15" Column="27" TopLine="4"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="79" Column="37" TopLine="63"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="82" Column="35" TopLine="65"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="89" Column="22" TopLine="71"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="80" Column="41" TopLine="63"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="79" Column="37" TopLine="63"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="80" Column="31" TopLine="65"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="178" Column="5" TopLine="82"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="194" Column="12" TopLine="178"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="187" TopLine="169"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="175" TopLine="162"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="92" Column="30" TopLine="71"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="99" Column="4" TopLine="77"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="105" Column="18" TopLine="77"/>
+      </Position>
+      <Position>
+        <Filename Value="test.pas"/>
+        <Caret Line="4" Column="32"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="114" Column="39" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="112" Column="66" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="115" Column="13" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="test.pas"/>
+        <Caret Line="2" Column="14"/>
+      </Position>
+      <Position>
+        <Filename Value="memcontrol.lpr"/>
+        <Caret Line="15" Column="36"/>
+      </Position>
+      <Position>
+        <Filename Value="test.pas"/>
+        <Caret Line="11" Column="22"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

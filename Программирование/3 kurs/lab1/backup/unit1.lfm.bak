@@ -1,0 +1,11 @@
+object Form1: TForm1
+  Left = 200
+  Height = 100
+  Top = 100
+  Width = 500
+  Caption = 'Неваляшка'
+  DesignTimePPI = 102
+  Font.Height = 14
+  OnChangeBounds = FormChangeBounds
+  OnCreate = FormCreate
+end

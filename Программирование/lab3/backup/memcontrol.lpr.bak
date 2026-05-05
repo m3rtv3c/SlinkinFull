@@ -1,0 +1,133 @@
+unit memcontrol;
+
+{$mode ObjFPC}
+
+interface
+
+uses sysUtils, unit1;
+
+type
+// базовый тип элемента данных в хранилище
+  TData = pointer;
+// абстрактный класс с описанием механизма доступа к данным
+{ TAbstractStorage }
+
+TAbstractStorage=class
+   protected
+       function getData(position:qword):TData;virtual;abstract;
+       procedure setData(position:qword; value:TData);virtual;abstract;
+       function getCount:qword;virtual;abstract;
+   protected
+       property data[position:qword]:TData read getData write setData; default;
+       property count:qword read getcount;
+end;
+
+ // класс с реализацией хранилища в оперативной памяти
+ // с автоматическим расширением хранилища при попытке сохранения
+ // данных за его пределами и возвратом нулевого значения
+ // при попытке чтения данных за его пределами.
+  TMemStorage = class(TAbstractStorage)
+  private
+    fdata: array of TData;
+  protected
+    function getData(position: qword): TData; override;
+    procedure setData(position: qword; value: TData); override;
+    function getCount: qword; override;
+  end;
+
+  TIntMemStorage = class(TMemStorage)
+  protected
+    function getIData(position: qword): integer;
+    procedure setIData(position: qword; value: integer);
+  public
+    property dataI[position: qword]: integer read getIData write setIData; default;
+  end;
+
+  TFloatMemStorage = class(TMemStorage)
+  protected
+    function getfData(position: qword): extended;
+    procedure setfData(position: qword; value: extended);
+  public
+    property dataF[position: qword]: extended read getfData write setfData; default;
+    destructor Destroy; override;
+  end;
+
+  TFileStorage = class(TAbstractStorage)
+  private
+    fd: file;
+  protected
+    function getData(position: qword): TData; override;
+    procedure setData(position: qword; value: TData); override;
+    function getCount: qword; override;
+  public
+    constructor Create(filename: string);
+    destructor Destroy(); override;
+  end;
+
+  TIntFileStorage = class(TFileStorage)
+  protected
+    function getIData(position: qword): integer;
+    procedure setIData(position: qword; value: integer);
+  public
+    property dataI[position: qword]: integer read getIData write setIData; default;
+  end;
+
+implementation
+
+{TMemStorage}
+
+function TMemStorage.getData(position: qword): TData;
+begin
+  if position < QWord(Length(fdata)) then
+     Result := fdata[position]
+  else
+     Result := nil;
+end;
+
+procedure TMemStorage.setData(position: QWord; value: TData);
+begin
+  if position >= QWord(Length(fdata)) then
+    SetLength(fdata, position + 1);
+  fdata[position] := value;
+end;
+
+function TMemStorage.getCount: qword;
+begin
+  Result:= Length(fdata);
+end;
+
+{TIntMemStorage}
+
+function TIntMemStorage.getIData(position: qword):integer;
+var
+  ptr:PInteger;
+begin
+  ptr := PInteger(inherited getData(position));
+  if Assigned(ptr) then
+    Result := ptr^
+  else
+     Result := 0;
+end;
+
+procedure TIntMemStorage.setIData(position: QWord; value: Integer);
+var
+  ptr: PInteger;
+begin
+  New(ptr);
+  ptr^ := value;
+  inherited setData(position, TData(ptr));
+end;
+
+{TFloatMemStorage}
+
+function
+
+
+
+
+
+
+
+
+end.
+

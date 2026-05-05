@@ -1,0 +1,258 @@
+unit nevCode;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Menus, ExtCtrls,Interfaces;
+
+type
+
+  { TForm1 }
+
+  TForm1 = class(TForm)
+    procedure FormResize(Sender: TObject);
+    procedure bDemoPlusClick(Sender: TObject);
+    procedure bDemoMinusClick(Sender: TObject);
+    procedure eHeightEditingDone(Sender: TObject);
+    procedure eWidthEditingDone(Sender: TObject);
+    procedure FormChangeBounds(Sender: TObject);
+    procedure timeSizeTimer(Sender: TObject);
+  private
+    FMinW, FMaxW: Integer;
+    FMinH, FMaxH: Integer;
+    FStep: Integer;
+    FMode: Integer;
+    Panel1: TPanel;
+    bDemoPlus, bDemoMinus: TButton;
+    eHeight, eWidth: TEdit;
+    Label1, labelH: TLabel;
+    timeSize: TTimer;  // Добавили таймер в класс
+    procedure CenterForm;
+    procedure CenterPanel;
+    procedure UpdateEdits;
+    procedure LockControls(Alock: Boolean);
+  public
+    constructor Create(TheOwner: TComponent); override;
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{ TForm1 }
+
+
+constructor TForm1.Create(TheOwner: TComponent);
+begin
+  inherited Create(TheOwner);
+  Width := 500;
+  Height := 100;
+  FMinW := 500;
+  FMaxW := 1000;
+  FMinH := 100;
+  FMaxH := 500;
+
+  Constraints.MinWidth := FMinW;
+  Constraints.MaxWidth := FMaxW;
+  Constraints.MinHeight := FMinH;
+  Constraints.MaxHeight := FMaxH;
+  FStep := 1;
+  // Создание компонентов программно
+  // Панель
+  Panel1 := TPanel.Create(Self);
+  Panel1.Parent := Self;
+  Panel1.Width := 500;
+  Panel1.Height := 100;
+  Panel1.Left := (ClientWidth - Panel1.Width) div 2;
+  Panel1.Top := (ClientHeight - Panel1.Height) div 2;
+  Panel1.Caption := '';
+  Panel1.BevelOuter := bvNone;
+
+  //текст - ширина
+  Label1 := TLabel.Create(Self);
+  Label1.Parent := Panel1;
+  Label1.Caption := 'Ширина:';
+  Label1.Height := 16;
+  Label1.Width := 57;
+  Label1.Top := 16;
+  Label1.Left := 264;
+
+  //текст - высота
+  labelH := TLabel.Create(Self);
+  labelH.Parent := Panel1;
+  labelH.Caption := 'Высота:';
+  labelH.Top := 16;
+  LabelH.Width := 51;
+  LabelH.Height := 16;
+  labelH.Left := 40;
+
+  //текстбокс - ширина
+  eWidth := TEdit.Create(Self);
+  eWidth.Parent := Panel1;
+  eWidth.Top := 32;
+  eWidth.Left := 264;
+  eWidth.Height := 28;
+  eWidth.Width := 186;
+  eWidth.Text := IntToStr(Width);
+  eWidth.OnEditingDone := @eWidthEditingDone;
+
+  //текстбокс - высота
+  eHeight := TEdit.Create(Self);
+  eHeight.Parent := Panel1;
+  eHeight.Top := 32;
+  eHeight.Height := 28;
+  eHeight.Left := 40;
+  eHeight.Width := 186;
+  eHeight.Text := IntToStr(Height);
+  eHeight.OnEditingDone := @eHeightEditingDone;
+
+  // кнопка - увеличение
+  bDemoPlus := TButton.Create(Self);
+  bDemoPlus.Parent := Panel1;
+  bDemoPlus.Caption := 'Демо+';
+  bDemoPlus.Top := 64;
+  bDemoPlus.Width := 186;
+  bDemoPlus.Height := 27;
+  bDemoPlus.Left := 40;
+  bDemoPlus.OnClick := @bDemoPlusClick;
+
+  //кнопка - уменьшение
+  bDemoMinus := TButton.Create(Self);
+  bDemoMinus.Parent := Panel1;
+  bDemoMinus.Caption := 'Демо-';
+  bDemoMinus.Height := 27;
+  bDemoMinus.Width := 186;
+  bDemoMinus.Top := 64;
+  bDemoMinus.Left := 264;
+  bDemoMinus.OnClick := @bDemoMinusClick;
+
+  //таймер
+  timeSize := TTimer.Create(Self);
+  timeSize.Enabled := False;
+  timeSize.Interval := 20;
+  timeSize.OnTimer := @timeSizeTimer;
+
+  Self.OnChangeBounds := @FormChangeBounds;
+  CenterForm;
+  UpdateEdits;
+end;
+
+procedure TForm1.CenterPanel;
+begin
+  Panel1.Left := (ClientWidth - Panel1.Width) div 2;
+  Panel1.Top := (ClientHeight - Panel1.Height) div 2;
+end;
+
+procedure TForm1.CenterForm;
+begin
+  Left := (Screen.Width - Width) div 2;
+  Top := (Screen.Height - Height) div 2;
+end;
+
+procedure TForm1.UpdateEdits;
+begin
+  eWidth.Text := IntToStr(Width);
+  eHeight.Text := IntToStr(Height);
+end;
+
+procedure TForm1.LockControls(ALock: Boolean);
+begin
+  eWidth.Enabled := not ALock;
+  eHeight.Enabled := not ALock;
+  bDemoPlus.Enabled := not ALock;
+  bDemoMinus.Enabled := not ALock;
+end;
+
+procedure TForm1.bDemoPlusClick(Sender: TObject);
+begin
+  FMode := 1;
+  LockControls(True);
+  timeSize.Enabled := True;
+end;
+
+procedure TForm1.bDemoMinusClick(Sender: TObject);
+begin
+  FMode := -1;
+  LockControls(True);
+  timeSize.Enabled := True;
+end;
+
+procedure TForm1.eHeightEditingDone(Sender: TObject);
+var
+  v: Integer;
+begin
+  if TryStrToInt(eHeight.Text, v) then
+  begin
+    if v < FMinH then v := FMinH;
+    if v > FMaxH then v := FMaxH;
+    Height := v;
+  end
+  else
+    eHeight.Text := IntToStr(Height);
+end;
+
+procedure TForm1.eWidthEditingDone(Sender: TObject);
+var
+  v: Integer;
+begin
+  if TryStrToInt(eWidth.Text, v) then
+  begin
+    if v < FMinW then v := FMinW;
+    if v > FMaxW then v := FMaxW;
+    Width := v;
+  end
+  else
+    eWidth.Text := IntToStr(Width);
+end;
+
+procedure TForm1.FormChangeBounds(Sender: TObject);
+begin
+  CenterForm;
+  UpdateEdits;
+  CenterPanel;
+end;
+
+procedure TForm1.FormResize(Sender: TObject);
+begin
+  UpdateEdits;
+  CenterPanel;
+end;
+
+procedure TForm1.timeSizeTimer(Sender: TObject);
+begin
+  if FMode = 1 then
+  begin
+    if (Width < FMaxW) then
+      Width := Width + FStep;
+    if (Height < FMaxH) then
+      Height := Height + FStep;
+
+    if (Width = FMaxW) and (Height = FMaxH) then
+    begin
+      timeSize.Enabled := False;
+      LockControls(False);
+    end;
+  end
+  else if FMode = -1 then
+  begin
+    if (Width > FMinW) then
+      Width := Width - FStep;
+    if (Height > FMinH) then
+      Height := Height - FStep;
+
+    if (Width = FMinW) and (Height = FMinH) then
+    begin
+      timeSize.Enabled := False;
+      LockControls(False);
+    end;
+  end;
+end;
+
+initialization
+  {$I nevCode.lrs}
+
+end.

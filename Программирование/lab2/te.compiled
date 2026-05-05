@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="/usr/bin/fpc" Date="1654788744"/>
+  <Params Value=" -MObjFPC -Scghi -Cg -O1 -gw3 -gl -l -vewnhibq -Fu/usr/lib64/lazarus/components/sqldb/lib/x86_64-linux/gtk2 -Fu/usr/lib64/lazarus/components/ideintf/units/x86_64-linux/gtk2 -Fu/usr/lib64/lazarus/components/synedit/units/x86_64-linux/gtk2 -Fu/usr/lib64/lazarus/components/lazcontrols/lib/x86_64-linux/gtk2 -Fu/usr/lib64/lazarus/lcl/units/x86_64-linux/gtk2 -Fu/usr/lib64/lazarus/lcl/units/x86_64-linux -Fu/usr/lib64/lazarus/components/freetype/lib/x86_64-linux -Fu/usr/lib64/lazarus/components/codetools/units/x86_64-linux -Fu/usr/lib64/lazarus/components/buildintf/units/x86_64-linux -Fu/usr/lib64/lazarus/components/lazutils/lib/x86_64-linux -Fu/usr/lib64/lazarus/packager/units/x86_64-linux -Fu/home/student/Документы/230/Программирование/lab2/ -o/home/student/Документы/230/Программирование/lab2/te -dLCL -dLCLgtk2 -Fr/usr/lib64/fpc/msg/errore.msg te.lpr"/>
+  <Complete Value="False"/>
+</CONFIG>

@@ -1,0 +1,100 @@
+unit memcontrol;
+
+{$mode ObjFPC}
+
+interface
+
+uses
+  SysUtils;
+
+type
+  generic TAbstractStorage<TData>=class
+  protected
+    function getData(position: qword): TData; virtual; abstract;
+    procedure setData(position: qword; value: TData); virtual; abstract;
+    function getCount: qword; virtual; abstract;
+    property data[position: qword]: TData read getData write setData; default;
+  public
+    property count: qword read getCount;
+  end;
+
+  // generic для работы с памятью
+  generic TMemStorage<TData>=class(specialize TAbstractStorage<TData>)
+  private
+    fdata: array of TData;
+  protected
+    function getData(position: qword): TData; override;
+    procedure setData(position: qword; value: TData); override;
+    function getCount: qword; override;
+  end;
+
+  // generic для рабосы с intt64
+  TInt64MemStorage = class(specialize TMemStorage<Int64>)
+  public
+    property dataI[position: qword]: Int64 read getData write setData; default;
+  end;
+
+  // класс для хранения float значений в памяти
+   TExtendedMemStorage = class(specialize TMemStorage<Extended>)
+   public
+     property dataF[position: qword]: Extended read getData write setData; default;
+   end;
+
+  // универсальный класс для хранения данных в файле
+  generic TFileStorage<TData>=class(specialize TAbstractStorage<TData>)
+  private
+    FFileHandle: File;
+    FFileName: string;
+    FCount: qword;
+    FElementSize: qword;
+  protected
+    function getData(position: qword): TData; override;
+    procedure setData(position: qword; value: TData); override;
+    function getCount: qword; override;
+  public
+    constructor Create(filename: string; elementSize: qword);
+    destructor Destroy; override;
+  end;
+
+  TByteFileSotrage = class (specialize TFileStorage<Byte>)
+
+  end;
+
+  TStringFileSotrage = class (specialize TFileStorage<ShortString>)
+
+  end;
+
+
+implementation
+
+{ TMemStorage }
+
+function TMemStorage.getData(position: qword): TData;
+begin
+  if position < Length(fdata) then
+    Result := fdata[position]
+  else
+    raise Exception.Create('Index out of range');
+end;
+
+procedure TMemStorage.setData(position: qword; const value: TData);
+begin
+  if position >= Length(fdata) then
+    SetLength(fdata, position + 1);
+  fdata[position] := value;  // Прямое присваивание
+end;
+
+function TMemStorage.getCount: qword;
+begin
+  Result := Length(fdata);
+end;
+
+
+
+
+
+
+
+
+end.
+

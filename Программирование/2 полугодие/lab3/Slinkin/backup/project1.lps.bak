@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <Units>
+      <Unit>
+        <Filename Value="project1.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="27" Y="4"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../../lab2/Lab3/testsave.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="testSave"/>
+        <EditorIndex Value="1"/>
+        <CursorPos Y="35"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/share/fpcsrc/rtl/unix/sysutils.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="112"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="4">
+      <Position>
+        <Filename Value="../../lab2/Lab3/testsave.pas"/>
+        <Caret Line="119" Column="62" TopLine="111"/>
+      </Position>
+      <Position>
+        <Filename Value="../../lab2/Lab3/testsave.pas"/>
+        <Caret Line="4" Column="13"/>
+      </Position>
+      <Position>
+        <Filename Value="../../lab2/Lab3/testsave.pas"/>
+        <Caret Line="125" Column="31" TopLine="102"/>
+      </Position>
+      <Position>
+        <Filename Value="../../lab2/Lab3/testsave.pas"/>
+        <Caret Line="37" Column="19" TopLine="17"/>
+      </Position>
+      <Position>
+        <Filename Value="../../lab2/Lab3/testsave.pas"/>
+        <Caret Line="228" Column="45" TopLine="243"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

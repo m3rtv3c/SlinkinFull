@@ -1,0 +1,47 @@
+{$mode objfpc}
+uses heaptrc,sysutils,genControl;
+var
+  intStore: TInt64MemStorage;
+  floatStore: TExtendedMemStorage;
+  byteFile: TByteFileStorage;
+  strFile: TStringFileStorage;
+begin
+  Writeln('----TInt64MemStorage----');
+  intStore := TInt64MemStorage.Create;
+  intStore[0] := 100;
+  intStore[1] := 200;
+  intStore[1000] := 3;
+  Writeln('[0] = ', intStore[0]);
+  WriteLn('[1] = ', intStore[1]);
+  Writeln('[1000] = ', intStore[1000]);
+  Writeln('IntStoreCount: ', intStore.Count);
+  intStore.Free;
+
+  Writeln('----TExtendedMemStorage----');
+  floatStore := TExtendedMemStorage.Create;
+  floatStore[0] := 3.1415;
+  WriteLn('FloatStore[0] = ', floatStore[0]:0:4);
+  Writeln('FloatStoreCount: ', floatStore.Count);
+  floatStore.Free;
+
+  Writeln('----TByteFileStorage----');
+  byteFile := TByteFileStorage.Create('bytes.dat');
+  byteFile[0] := 10;
+  byteFile[1] := 20;
+  WriteLn('ByteFile[1] = ', byteFile[1]);
+  Writeln('ByteFileCount: ', byteFile.Count);
+  byteFile.Free;
+
+
+  Writeln('----TStringFileStorage----');
+  strFile := TStringFileStorage.Create('strings.dat');
+  strFile[0] := 'Hello';
+  strFile[1] := 'World';
+  strFile[1000000000] := 'TextTest';
+
+  WriteLn('StrFile[1] = ', strFile[1]);
+  Writeln('StrFile[10000] = ',strFile[10000]);
+  Writeln('StringFileCount: ', strFile.Count);
+  strFile.Free;
+end.
+

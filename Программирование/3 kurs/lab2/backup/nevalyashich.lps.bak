@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <Units>
+      <Unit>
+        <Filename Value="nevalyashich.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+      </Unit>
+      <Unit>
+        <Filename Value="nevcode.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="nevCode"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="57"/>
+        <CursorPos X="41" Y="70"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="17">
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="147" Column="30" TopLine="129"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="69" Column="37" TopLine="58"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="51" Column="28" TopLine="33"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="49" Column="35" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="39" Column="56" TopLine="34"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="42" Column="63" TopLine="34"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="37" Column="45" TopLine="30"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="52" Column="28" TopLine="34"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="50" Column="20" TopLine="34"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="39" Column="17" TopLine="23"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="50" Column="20" TopLine="34"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="132" Column="5" TopLine="113"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="190" Column="39" TopLine="173"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="128" Column="31" TopLine="37"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="129" Column="43" TopLine="112"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="127" Column="41" TopLine="107"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="128" Column="21" TopLine="112"/>
+      </Position>
+      <Position>
+        <Filename Value="nevcode.pas"/>
+        <Caret Line="73" Column="9" TopLine="57"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

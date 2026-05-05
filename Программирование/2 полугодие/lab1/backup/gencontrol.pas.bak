@@ -1,0 +1,132 @@
+unit genControl;
+
+{$mode ObjFPC}{$H+}
+
+interface
+
+uses
+  SysUtils, TypInfo;
+
+type
+  // Абстрактный базовый класс хранилища
+  generic TAbstractStorage<TData> = class
+  protected
+    function GetData(Position: QWord): TData; virtual; abstract;
+    procedure SetData(Position: QWord; const Value: TData); virtual; abstract;
+    function GetCount: QWord; virtual; abstract;
+  public
+    property Data[Position: QWord]: TData read GetData write SetData; default;
+    property Count: QWord read GetCount;
+  end;
+
+  // Хранилище в памяти
+  generic TMemStorage<TData> = class(specialize TAbstractStorage<TData>)
+  private
+    FData: array of TData;
+  protected
+    function GetData(Position: QWord): TData; override;
+    procedure SetData(Position: QWord; const Value: TData); override;
+    function GetCount: QWord; override;
+  end;
+
+  // Хранилище в файле
+  generic TFileStorage<TData> = class(specialize TAbstractStorage<TData>)
+  private
+    FFileHandle: File;
+    FFileName: string;
+    FElementSize: QWord;
+    FCount: QWord;
+  protected
+    function GetData(Position: QWord): TData; override;
+    procedure SetData(Position: QWord; const Value: TData); override;
+    function GetCount: QWord; override;
+  public
+    constructor Create(const FileName: string);
+    destructor Destroy; override;
+  end;
+
+  // Специализации
+  TInt64MemStorage = class(specialize TMemStorage<Int64>);
+  TExtendedMemStorage = class(specialize TMemStorage<Extended>);
+  TByteFileStorage = class(specialize TFileStorage<Byte>);
+  TStringFileStorage = class(specialize TFileStorage<ShortString>);
+
+implementation
+
+{ TMemStorage }
+
+function TMemStorage.GetData(Position: QWord): TData;
+begin
+  if Position >= QWord(Length(FData)) then
+    Result := 0;
+  Result := FData[Position];
+end;
+
+procedure TMemStorage.SetData(Position: QWord; const Value: TData);
+begin
+  if Position >= QWord(Length(FData)) then
+    SetLength(FData, Position + 1);
+  FData[Position] := Value;
+end;
+
+function TMemStorage.GetCount: QWord;
+begin
+  Result := Length(FData);
+end;
+
+{ TFileStorage }
+
+constructor TFileStorage.Create(const FileName: string);
+begin
+  inherited Create;
+  FFileName := FileName;
+  FElementSize := SizeOf(TData);
+  Assign(FFileHandle, FFileName);
+
+  if FileExists(FFileName) then
+    Reset(FFileHandle, 1)
+  else
+    Rewrite(FFileHandle, 1);
+
+  FCount := FileSize(FFileHandle) div FElementSize;
+end;
+
+destructor TFileStorage.Destroy;
+begin
+  Close(FFileHandle);
+  inherited Destroy;
+end;
+
+function TFileStorage.GetData(Position: QWord): TData;
+begin
+  // Проверяем, не выходит ли позиция за пределы существующих данных
+  if Position >= FCount then
+  begin
+    // Если позиция за пределами, то возвращаем "нулевое" значение для TData
+    Result := Default(TData);  // Возвращаем значение по умолчанию для TData
+  end
+  else
+  begin
+    // Иначе читаем данные из файла
+    Seek(FFileHandle, Position * FElementSize);  // Перемещаем указатель на нужную позицию
+    BlockRead(FFileHandle, Result, FElementSize); // Читаем данные
+  end;
+end;
+
+
+procedure TFileStorage.SetData(Position: QWord; const Value: TData);
+begin
+  if Position >= FCount then
+    FCount := Position + 1;
+
+  Seek(FFileHandle, Position * FElementSize);
+  BlockWrite(FFileHandle, Value, FElementSize);
+end;
+
+function TFileStorage.GetCount: QWord;
+begin
+  Result := FCount;
+end;
+
+end.
+

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="/usr/bin/fpc" Date="1654788744"/>
+  <Params Value=" -MObjFPC -Scgi -Cg -O1 -gw3 -gl -l -vewnhibq &quot;-Fu/home/student/Документы/230/Структуры и алгоритмы/2 полугодие/Lab1/&quot; &quot;-o/home/student/Документы/230/Структуры и алгоритмы/2 полугодие/Lab1/typeinspector&quot; -Fr/usr/lib64/fpc/msg/errore.msg typeinspector.lpr"/>
+</CONFIG>

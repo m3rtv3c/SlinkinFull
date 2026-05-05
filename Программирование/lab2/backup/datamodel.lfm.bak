@@ -1,0 +1,51 @@
+object DataModule1: TDataModule1
+  OnDestroy = DataModuleDestroy
+  OldCreateOrder = False
+  Height = 345
+  HorizontalOffset = 1360
+  VerticalOffset = 670
+  Width = 539
+  object SQLC: TSQLConnector
+    Connected = True
+    LoginPrompt = False
+    DatabaseName = 'postgres'
+    KeepConnection = False
+    Transaction = SQLT
+    UserName = 'postgres'
+    HostName = 'localhost'
+    ConnectorType = 'PostgreSQL'
+    Left = 104
+    Top = 72
+  end
+  object SQLT: TSQLTransaction
+    Active = True
+    Database = SQLC
+    Left = 184
+    Top = 72
+  end
+  object SQLQ: TSQLQuery
+    IndexName = 'DEFAULT_ORDER'
+    MaxIndexesCount = 4
+    FieldDefs = <    
+      item
+        Name = 'user'
+        DataType = ftString
+        Precision = -1
+        Size = 64
+      end>
+    Active = True
+    Database = SQLC
+    Transaction = SQLT
+    SQL.Strings = (
+      'select *from user'
+    )
+    Params = <>
+    Macros = <>
+    Left = 312
+    Top = 64
+  end
+  object DataSource1: TDataSource
+    Left = 240
+    Top = 192
+  end
+end

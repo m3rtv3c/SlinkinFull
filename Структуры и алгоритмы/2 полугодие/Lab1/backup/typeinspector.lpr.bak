@@ -1,0 +1,368 @@
+program TypeInspector;
+{$mode objfpc}
+
+uses
+  SysUtils;
+
+type
+  generic TTypeInspector<T> = class
+  public
+    procedure Inspect(const TypeName: string); virtual; abstract;
+    function LessThan(const A, B: T): Boolean; virtual;
+    function GreaterThan(const A, B: T): Boolean; virtual;
+    function Equal(const A, B: T): Boolean; virtual;
+    procedure WriteValue(const V: T); virtual;
+    procedure WriteValueLn(const V: T); virtual;
+  end;
+
+function TTypeInspector.LessThan(const A, B: T): Boolean;
+begin
+  Result := A < B;
+end;
+
+function TTypeInspector.GreaterThan(const A, B: T): Boolean;
+begin
+  Result := A > B;
+end;
+
+function TTypeInspector.Equal(const A, B: T): Boolean;
+begin
+  Result := A = B;
+end;
+
+procedure TTypeInspector.WriteValue(const V: T);
+begin
+  Write(V);
+end;
+
+procedure TTypeInspector.WriteValueLn(const V: T);
+begin
+  WriteValue(V);
+  WriteLn;
+end;
+
+type
+  //Класс ДЛЯ Integer
+  generic TIntegerInspector<T> = class(specialize TTypeInspector<T>)
+  public
+    procedure Inspect(const TypeName: string); override;
+  end;
+
+procedure TIntegerInspector.Inspect(const TypeName: string);
+var
+  Value, MinVal, MaxVal: T;
+  Size, i: Integer;
+  Ptr: PByte;
+  IsMin, IsMax: Boolean;
+begin
+  MinVal := Low(T);
+  MaxVal := High(T);
+  Size := SizeOf(T);
+  Value := MaxVal;
+
+  IsMin := Equal(Value, MinVal);
+  IsMax := Equal(Value, MaxVal);
+
+  WriteLn('Исследуемый тип: ', TypeName);
+
+  Write('Нижняя граница: ');
+  WriteValueLn(MinVal);
+
+  Write('Верхняя граница: ');
+  WriteValueLn(MaxVal);
+
+  WriteLn('Байт на переменную: ', Size);
+
+  Write('Текущее значение (максимум): ');
+  WriteValueLn(Value);
+
+  Write('Предыдущее значение: ');
+  if IsMin then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Pred(Value));
+
+  Write('Последующее значение: ');
+  if IsMax then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Succ(Value));
+
+  Write('Содержимое оперативной памяти: ');
+  Ptr := @Value;
+  for i := 0 to Size - 1 do
+    Write(Ptr[i], ' ');
+  WriteLn;
+end;
+
+type
+  //Класс для НЕ Integer
+  generic TDefaultInspector<T> = class(specialize TTypeInspector<T>)
+  public
+    procedure Inspect(const TypeName: string); override;
+  end;
+
+procedure TDefaultInspector.Inspect(const TypeName: string);
+var
+  Value, MinVal, MaxVal: T;
+  Size, i: Integer;
+  Ptr: PByte;
+  IsMin, IsMax: Boolean;
+begin
+  Randomize;
+  MinVal := Low(T);
+  MaxVal := High(T);
+  Size := SizeOf(T);
+  Value := Default(T);
+  Ptr := @Value;
+  FillChar(Value, Size, 0);
+  for i := 0 to Size - 1 do
+    Ptr[i] := Random(256);
+
+  if LessThan(Value, MinVal) then Value := MinVal
+  else if GreaterThan(Value, MaxVal) then Value := MaxVal;
+
+  IsMin := Equal(Value, MinVal);
+  IsMax := Equal(Value, MaxVal);
+
+  WriteLn('Исследуемый тип: ', TypeName);
+
+  Write('Нижняя граница: ');
+  WriteValueLn(MinVal);
+
+  Write('Верхняя граница: ');
+  WriteValueLn(MaxVal);
+
+  WriteLn('Байт на переменную: ', Size);
+
+  Write('Случайное значение: ');
+  WriteValueLn(Value);
+
+  Write('Предыдущее значение: ');
+  if IsMin then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Pred(Value));
+
+  Write('Последующее значение: ');
+  if IsMax then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Succ(Value));
+
+  Write('Содержимое оперативной памяти: ');
+  for i := 0 to Size - 1 do
+    Write(Ptr[i], ' ');
+  WriteLn;
+end;
+
+//Класс-наследние для Char
+type
+  TCharInspector = class(specialize TTypeInspector<Char>)
+  public
+    function LessThan(const A, B: Char): Boolean; override;
+    function GreaterThan(const A, B: Char): Boolean; override;
+    function Equal(const A, B: Char): Boolean; override;
+    procedure WriteValue(const V: Char); override;
+    procedure WriteValueLn(const V: Char); override;
+    procedure Inspect(const TypeName: string); override;
+  end;
+
+function TCharInspector.LessThan(const A, B: Char): Boolean;
+begin
+  Result := Ord(A) < Ord(B);
+end;
+
+function TCharInspector.GreaterThan(const A, B: Char): Boolean;
+begin
+  Result := Ord(A) > Ord(B);
+end;
+
+function TCharInspector.Equal(const A, B: Char): Boolean;
+begin
+  Result := Ord(A) = Ord(B);
+end;
+
+procedure TCharInspector.WriteValue(const V: Char);
+begin
+  Write('#', Ord(V));
+end;
+
+procedure TCharInspector.WriteValueLn(const V: Char);
+begin
+  WriteValue(V);
+  WriteLn;
+end;
+
+procedure TCharInspector.Inspect(const TypeName: string);
+var
+  Value, MinVal, MaxVal: Char;
+  Size: Integer;
+  IsMin, IsMax: Boolean;
+begin
+  Randomize;
+  MinVal := Low(Char);
+  MaxVal := High(Char);
+  Size := SizeOf(Char);
+  Value := Char(Random(256));
+
+  IsMin := Equal(Value, MinVal);
+  IsMax := Equal(Value, MaxVal);
+
+  WriteLn('Исследуемый тип: ', TypeName);
+
+  Write('Нижняя граница: ');
+  WriteValueLn(MinVal);
+
+  Write('Верхняя граница: ');
+  WriteValueLn(MaxVal);
+
+  WriteLn('Байт на переменную: ', Size);
+
+  Write('Случайное значение: ');
+  WriteValueLn(Value);
+
+  Write('Предыдущее значение: ');
+  if IsMin then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Pred(Value));
+
+  Write('Последующее значение: ');
+  if IsMax then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Succ(Value));
+
+  Write('Содержимое оперативной памяти: ');
+  Write(Byte(Value), ' ');
+  WriteLn;
+end;
+
+// Класс-наследние для Boolean
+type
+  TBooleanInspector = class(specialize TTypeInspector<Boolean>)
+  public
+    procedure Inspect(const TypeName: string); override;
+    function LessThan(const A, B: Boolean): Boolean; override;
+    function GreaterThan(const A, B: Boolean): Boolean; override;
+    function Equal(const A, B: Boolean): Boolean; override;
+    procedure WriteValue(const V: Boolean); override;
+    procedure WriteValueLn(const V: Boolean); override;
+  end;
+
+procedure TBooleanInspector.Inspect(const TypeName: string);
+var
+  Value, MinVal, MaxVal: Boolean;
+  Size: Integer;
+  IsMin, IsMax: Boolean;
+begin
+  Randomize;
+  MinVal := Low(Boolean);
+  MaxVal := High(Boolean);
+  Size := SizeOf(Boolean);
+
+  Value := Boolean(Random(2));
+
+  IsMin := Equal(Value, MinVal);
+  IsMax := Equal(Value, MaxVal);
+
+  WriteLn('Исследуемый тип: ', TypeName);
+
+  Write('Нижняя граница: ');
+  WriteValueLn(MinVal);
+
+  Write('Верхняя граница: ');
+  WriteValueLn(MaxVal);
+
+  WriteLn('Байт на переменную: ', Size);
+
+  Write('Случайное значение: ');
+  WriteValueLn(Value);
+
+  Write('Предыдущее значение: ');
+  if IsMin then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Pred(Value));
+
+  Write('Последующее значение: ');
+  if IsMax then
+    WriteLn('Overflow')
+  else
+    WriteValueLn(Succ(Value));
+
+  Write('Содержимое оперативной памяти: ');
+  Write(Byte(Value), ' ');
+  WriteLn;
+end;
+
+function TBooleanInspector.LessThan(const A, B: Boolean): Boolean;
+begin
+  Result := Ord(A) < Ord(B);
+end;
+
+function TBooleanInspector.GreaterThan(const A, B: Boolean): Boolean;
+begin
+  Result := Ord(A) > Ord(B);
+end;
+
+function TBooleanInspector.Equal(const A, B: Boolean): Boolean;
+begin
+  Result := Ord(A) = Ord(B);
+end;
+
+procedure TBooleanInspector.WriteValue(const V: Boolean);
+begin
+  Write(BoolToStr(V, True));
+end;
+
+procedure TBooleanInspector.WriteValueLn(const V: Boolean);
+begin
+  WriteValue(V);
+  WriteLn;
+end;
+
+procedure ProcessType(const TypeName: string);
+begin
+  if TypeName = 'Shortint' then
+    specialize TIntegerInspector<Shortint>.Create.Inspect(TypeName)
+  else if TypeName = 'Smallint' then
+    specialize TIntegerInspector<Smallint>.Create.Inspect(TypeName)
+  else if TypeName = 'Longint' then
+    specialize TIntegerInspector<Longint>.Create.Inspect(TypeName)
+  else if TypeName = 'Longword' then
+    specialize TIntegerInspector<Longword>.Create.Inspect(TypeName)
+  else if TypeName = 'Int64' then
+    specialize TIntegerInspector<Int64>.Create.Inspect(TypeName)
+  else if TypeName = 'Byte' then
+    specialize TIntegerInspector<Byte>.Create.Inspect(TypeName)
+  else if TypeName = 'Word' then
+    specialize TIntegerInspector<Word>.Create.Inspect(TypeName)
+  else if TypeName = 'Cardinal' then
+    specialize TIntegerInspector<Cardinal>.Create.Inspect(TypeName)
+  else if TypeName = 'QWord' then
+    specialize TIntegerInspector<QWord>.Create.Inspect(TypeName)
+  else if TypeName = 'Char' then
+    TCharInspector.Create.Inspect(TypeName)
+  else if TypeName = 'Boolean' then
+    TBooleanInspector.Create.Inspect(TypeName)
+  else
+  begin
+    WriteLn('Error');
+    Halt(1);
+  end;
+end;
+
+
+var
+  InputType: string;
+
+begin
+  Write('Введите тип: ');
+  ReadLn(InputType);
+  ProcessType(InputType);
+end.
+
+
+
