@@ -31,15 +31,17 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#2'('#10'Font.Style'#11#6'fsBold'#0#10'GroupIndex'#2#1#7'OnClick'#7#11'SBMov'
   +'eClick'#10'ParentFont'#8#0#0#12'TSpeedButton'#8'SBCancel'#4'Left'#2#2#6'Hei'
   +'ght'#2'2'#3'Top'#3#202#0#5'Width'#2'2'#10'AllowAllUp'#9#7'Anchors'#11#0#7'C'
-  +'aption'#6#1'X'#11'Font.Height'#2'('#10'GroupIndex'#2#1#10'ParentFont'#8#0#0
-  +#0#10'TStatusBar'#8'SBStatus'#4'Left'#2#0#6'Height'#2#18#3'Top'#3'q'#1#5'Wid'
-  +'th'#3#185#2#11'BorderWidth'#2#1#6'Panels'#14#1#5'Width'#2'2'#0#0#11'SimpleP'
-  +'anel'#8#0#0#9'TMainMenu'#9'MainMenu1'#4'Left'#3#152#0#3'Top'#2'('#0#9'TMenu'
-  +'Item'#6'MIFile'#7'Caption'#6#8#208#164#208#176#208#185#208#187#0#9'TMenuIte'
-  +'m'#6'MILoad'#7'Caption'#6#18#208#151#208#176#208#179#209#128#209#131#208#183
-  +#208#184#209#130#209#140#0#0#9'TMenuItem'#8'MIUpload'#7'Caption'#6#18#208#161
-  +#208#190#209#133#209#128#208#176#208#189#208#184#209#130#209#140#0#0#0#9'TMe'
-  +'nuItem'#6'MIEdit'#7'Caption'#6#12#208#159#209#128#208#176#208#178#208#186
-  +#208#176#0#0#9'TMenuItem'#6'MIHelp'#7'Caption'#6#14#208#161#208#191#209#128
-  +#208#176#208#178#208#186#208#176#0#0#0#0
+  +'aption'#6#1'X'#11'Font.Height'#2'('#10'GroupIndex'#2#1#7'OnClick'#7#13'SBCa'
+  +'ncelClick'#10'ParentFont'#8#0#0#0#10'TStatusBar'#8'SBStatus'#4'Left'#2#0#6
+  +'Height'#2#18#3'Top'#3'q'#1#5'Width'#3#185#2#11'BorderWidth'#2#1#6'Panels'#14
+  +#1#5'Width'#2'2'#0#0#11'SimplePanel'#8#0#0#9'TMainMenu'#9'MainMenu1'#4'Left'
+  +#3#152#0#3'Top'#2'('#0#9'TMenuItem'#6'MIFile'#7'Caption'#6#8#208#164#208#176
+  +#208#185#208#187#0#9'TMenuItem'#6'MILoad'#7'Caption'#6#18#208#151#208#176#208
+  +#179#209#128#209#131#208#183#208#184#209#130#209#140#0#0#9'TMenuItem'#8'MIUp'
+  +'load'#7'Caption'#6#18#208#161#208#190#209#133#209#128#208#176#208#189#208
+  +#184#209#130#209#140#0#0#0#9'TMenuItem'#6'MIEdit'#7'Caption'#6#12#208#159#209
+  +#128#208#176#208#178#208#186#208#176#0#0#9'TMenuItem'#6'MIHelp'#7'Caption'#6
+  +#14#208#161#208#191#209#128#208#176#208#178#208#186#208#176#0#9'TMenuItem'#7
+  +'MIGuide'#7'Caption'#6#14#208#161#208#191#209#128#208#176#208#178#208#186#208
+  +#176#0#0#0#0#0
 ]);
