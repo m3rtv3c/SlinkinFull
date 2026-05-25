@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, Menus, ComCtrls, Types, Math;
+  Buttons, Menus, ComCtrls, IpHtml, Types, Math, Unit2;
 
 type
   TShapeType = (stLine, stRectangle, stCircle);
@@ -35,6 +35,7 @@ type
     SBMove: TSpeedButton;
     SBStatus: TStatusBar;
     procedure FormCreate(Sender: TObject);
+    procedure MIGuideClick(Sender: TObject);
     procedure PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -87,7 +88,7 @@ end;
 
 procedure TForm1.SBMoveClick(Sender: TObject);
 begin
-  SBStatus.Panels[0].Text := 'Режим перемещения';
+  SBStatus.Panels[0].Text := 'Режим готовности к перемещению';
 end;
 
 procedure TForm1.SBCancelClick(Sender: TObject);
@@ -104,6 +105,12 @@ begin
   HoveredIdx := -1;
   SetLength(Shapes, 0);
   DoubleBuffered := True;
+end;
+
+procedure TForm1.MIGuideClick(Sender: TObject);
+begin
+  Form2.Position := poScreenCenter;
+  Form2.Show;
 end;
 
 function TForm1.GetShapeBoundingRect(const AShape: TShape): TRect;
@@ -149,17 +156,18 @@ begin
     begin
       DeleteShape(DelIdx); // Удаляем её
     end;
-    Exit; // Выходим, чтобы не началось рисование
+    Exit;
   end;
 
   //Перемещение
   if SBMove.Down then
   begin
+    SBStatus.Panels[0].Text := 'Режим перемещения';
     SelectedIdx := FindShapeAt(Pt);
     if SelectedIdx <> -1 then
     begin
       IsMoving := True;
-      DragOffset.X := X - Shapes[SelectedIdx].StartPt.X;  //Рассчитываем смещение
+      DragOffset.X := X - Shapes[SelectedIdx].StartPt.X;  //Рассчитываем смещение курсора относително самой фигуры
       DragOffset.Y := Y - Shapes[SelectedIdx].StartPt.Y;
       PaintBox1.Invalidate;
     end;
@@ -185,10 +193,12 @@ var
 begin
   if IsMoving and (SelectedIdx <> -1) then
   begin
-    W := Shapes[SelectedIdx].EndPt.X - Shapes[SelectedIdx].StartPt.X;
+    W := Shapes[SelectedIdx].EndPt.X - Shapes[SelectedIdx].StartPt.X; //Сохраняем исходный размер
     H := Shapes[SelectedIdx].EndPt.Y - Shapes[SelectedIdx].StartPt.Y;
 
+    //Меняем начальную точку
     Shapes[SelectedIdx].StartPt := Point(X - DragOffset.X, Y - DragOffset.Y);
+    //Конечная точка - новая начальная и переносим размеры
     Shapes[SelectedIdx].EndPt := Point(Shapes[SelectedIdx].StartPt.X + W, Shapes[SelectedIdx].StartPt.Y + H);
 
     PaintBox1.Invalidate;
@@ -228,9 +238,10 @@ begin
   if IsMoving then
   begin
     IsMoving := False;
-    SelectedIdx := -1;
+    SelectedIdx := -1;  //Сбрасываем сбор
     HoveredIdx := FindShapeAt(Point(X, Y)); //Осталась ли фигура под курсором
     PaintBox1.Invalidate;
+    SBStatus.Panels[0].Text := 'Режим готовности к перемещению';
     Exit;
   end;
 

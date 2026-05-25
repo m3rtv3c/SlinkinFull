@@ -157,6 +157,7 @@ object Form1: TForm1
       Caption = 'Справка'
       object MIGuide: TMenuItem
         Caption = 'Справка'
+        OnClick = MIGuideClick
       end
     end
   end
