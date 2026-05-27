@@ -1,18 +1,18 @@
 object Form2: TForm2
   Left = 263
-  Height = 240
+  Height = 432
   Top = 250
-  Width = 320
+  Width = 483
   Caption = 'Form2'
-  ClientHeight = 240
-  ClientWidth = 320
+  ClientHeight = 432
+  ClientWidth = 483
   DesignTimePPI = 102
   OnCreate = FormCreate
   object IpHtmlPanel1: TIpHtmlPanel
     Left = 0
-    Height = 240
+    Height = 432
     Top = 0
-    Width = 320
+    Width = 483
     Align = alClient
     FixedTypeface = 'Courier'
     DefaultTypeFace = 'default'

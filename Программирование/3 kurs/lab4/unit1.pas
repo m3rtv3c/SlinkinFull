@@ -36,6 +36,8 @@ type
     SBStatus: TStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure MIGuideClick(Sender: TObject);
+    procedure MILoadClick(Sender: TObject);
+    procedure MIUploadClick(Sender: TObject);
     procedure PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -111,6 +113,26 @@ procedure TForm1.MIGuideClick(Sender: TObject);
 begin
   Form2.Position := poScreenCenter;
   Form2.Show;
+end;
+
+procedure TForm1.MILoadClick(Sender: TObject);
+begin
+end;
+
+procedure TForm1.MIUploadClick(Sender: TObject);
+ var myBitmap: TBitmap;
+begin
+  MyBitmap := TBitmap.Create;
+  try
+  MyBitmap.LoadFromDevice(PaintBox1.Canvas.Handle);
+  MyBitmap.SetSize(PaintBox1.Width, PaintBox1.Height);
+  MyBitmap.SaveToFile('savedImage.bmp');
+  SBStatus.Visible := False;
+  finally
+   MyBitmap.Free;
+   SBStatus.Panels[0].Text := 'Сохранено успешно в savedImage.bmp';
+   SBStatus.Visible := True;
+  end;
 end;
 
 function TForm1.GetShapeBoundingRect(const AShape: TShape): TRect;

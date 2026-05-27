@@ -8,6 +8,7 @@ object Form2: TForm2
   ClientWidth = 483
   DesignTimePPI = 102
   OnCreate = FormCreate
+  LCLVersion = '3.6.0.0'
   object IpHtmlPanel1: TIpHtmlPanel
     Left = 0
     Height = 432

@@ -1,10 +1,10 @@
 object Form1: TForm1
   Left = 263
-  Height = 387
+  Height = 363
   Top = 250
   Width = 697
   Caption = 'Form1'
-  ClientHeight = 387
+  ClientHeight = 363
   ClientWidth = 697
   Constraints.MinHeight = 280
   Constraints.MinWidth = 280
@@ -12,10 +12,10 @@ object Form1: TForm1
   Menu = MainMenu1
   OnCreate = FormCreate
   object PaintBox1: TPaintBox
-    Left = 0
-    Height = 369
+    Left = 55
+    Height = 345
     Top = 0
-    Width = 697
+    Width = 642
     Align = alClient
     OnMouseDown = PaintBox1MouseDown
     OnMouseMove = PaintBox1MouseMove
@@ -24,11 +24,11 @@ object Form1: TForm1
   end
   object FlowPanel1: TFlowPanel
     Left = 0
-    Height = 368
+    Height = 345
     Top = 0
     Width = 55
+    Align = alLeft
     Alignment = taLeftJustify
-    Anchors = [akTop, akLeft, akBottom]
     BorderWidth = 1
     ControlList = <    
       item
@@ -129,8 +129,9 @@ object Form1: TForm1
   object SBStatus: TStatusBar
     Left = 0
     Height = 18
-    Top = 369
+    Top = 345
     Width = 697
+    Anchors = [akTop, akLeft, akRight, akBottom]
     BorderWidth = 1
     Panels = <    
       item
@@ -145,9 +146,11 @@ object Form1: TForm1
       Caption = 'Файл'
       object MILoad: TMenuItem
         Caption = 'Загрузить'
+        OnClick = MILoadClick
       end
       object MIUpload: TMenuItem
         Caption = 'Сохранить'
+        OnClick = MIUploadClick
       end
     end
     object MIEdit: TMenuItem

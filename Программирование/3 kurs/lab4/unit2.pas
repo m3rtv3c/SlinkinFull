@@ -37,7 +37,7 @@ begin
     HtmlList := TStringList.Create;
     try
       HtmlList.LoadFromFile(HtmlPath);
-      IpHtmlPanel1.SetHtmlFromStr(HtmlList.Text); // Загружаем текст напрямую
+      IpHtmlPanel1.SetHtmlFromStr(HtmlList.Text);
       IpHtmlPanel1.Visible := True;
     finally
       HtmlList.Free;

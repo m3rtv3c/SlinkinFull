@@ -51,6 +51,7 @@ void copy_dir(const char *src_dir, const char *dst_dir) {
 		//Если директория, то создаем новую и рекурсивно идем до конца
         if (S_ISDIR(st.st_mode)) {
             mkdir(dst_path, st.st_mode & 07777);
+            chmod(dst_path, st.st_mode & 07777);
             copy_dir(src_path, dst_path);
         } 
         //Если символьная ссылка, то создаем ее
@@ -78,6 +79,7 @@ int main(int argc, char **argv) {
     }
 
     mkdir(argv[2], st.st_mode & 07777);
+    chmod(argv[2], st.st_mode & 07777);
 
     copy_dir(argv[1], argv[2]);
 
