@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    user_info neighbors[1000]; 
+    user_info neighbors[5000]; 
     int total_neighbors = 0;
 
     struct group *grp;
