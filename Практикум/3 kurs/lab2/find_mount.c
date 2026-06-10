@@ -1,208 +1,228 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <sys/vfs.h>
-#include <limits.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/file.h>
+#include <sys/wait.h>
 
-// Структура файловой системы (только нужные поля)
-typedef struct {
-    fsid_t fsid;     //уникальный id
-    long type_code;  //магическое число          
-    char mnt_path[PATH_MAX]; //путь монтирования
+typedef struct
+{
+    char *name;  // Динамическая строка для имени любой длины
+    int count;
+} Server;
+
+// Линейный поиск имени сервера в динамическом массиве 
+int find_server(Server arr[], int n, const char *name)
+{
+    if (arr == NULL) return -1;
+    for(int i = 0; i < n; i++)
+    {
+        if(strcmp(arr[i].name, name) == 0)
+            return i;
+    }
+    return -1;
+}
+
+// Вспомогательная функция для безопасного добавления/обновления серверов в динамическом массиве
+Server* add_or_update_server(Server **arr, int *count, int *capacity, const char *name, int value)
+{
+    int pos = find_server(*arr, *count, name);
     
-    double total_gb;         //гигабайты
-    double free_gb;  
-             
-    int found_in_mtab;       //нашли ли в файловой системе
-    int is_inside;           //внутри каталога, или нет
-} FoundFS;
-
-struct statfs sfs;
-
-FoundFS saved_fs[100];
-int fs_count = 0;
-unsigned long start_dev_id = 0; 
-
-
-//просто словарь для типов файловых систем
-const char* get_fs_type_name(long type) {
-    switch (type) {
-        case 0xEF53:     return "ext2/ext3/ext4";
-        case 0x01021994: return "tmpfs";
-        case 0x4d44:     return "fat/vfat";
-        case 0x5346544e: return "ntfs";
-        case 0x9123683E: return "btrfs";
-        case 0x58465342: return "xfs";
-        default:         return "Другие типы ФС";
+    // Если сервер уже есть в массиве, просто суммируем счетчик
+    if (pos != -1) 
+    {
+        (*arr)[pos].count += value;
+        return *arr;
     }
+    
+    // Если массив заполнился, увеличиваем его емкость в 2 раза
+    if (*count >= *capacity) 
+    {
+        *capacity = (*capacity == 0) ? 16 : (*capacity * 2);
+        Server *temp = realloc(*arr, (*capacity) * sizeof(Server));
+        if (temp == NULL) 
+        {
+            perror("Ошибка выделения памяти под массив");
+            exit(1);
+        }
+        *arr = temp;
+    }
+    
+    // strdup выделяет память ровно под длину имени (+1 для '\0') и копирует строку
+    (*arr)[*count].name = strdup(name);
+    if ((*arr)[*count].name == NULL)
+    {
+        perror("Ошибка выделения памяти под имя сервера");
+        exit(1);
+    }
+    (*arr)[*count].count = value;
+    (*count)++;
+    
+    return *arr;
 }
 
-void find_mount_point(FoundFS *fs) {
-    FILE *fp = fopen("/etc/mtab", "r");
-    if (!fp) return;
+void process_file(char *csv_file, char *result_file)
+{
+    // Открываем файл с логами
+    FILE *f = fopen(csv_file, "r");
+    if(f == NULL)
+    {
+        perror(csv_file);
+        exit(1);
+    }
 
-    char line[1024];
-    char dev_name[256];
-    char mnt_dir[PATH_MAX];
-	struct statfs sfs;
-    // Читаем mtab построчно
-    while (fgets(line, sizeof(line), fp)) {
-        if (sscanf(line, "%255s %255s", dev_name, mnt_dir) == 2) {
-           
-            //Проверяем statfs для этой точки монтирования
-            if (statfs(mnt_dir, &sfs) == 0) {
-                //Если FSID совпал с нашей найденной системой
-                if (sfs.f_fsid.__val[0] == fs->fsid.__val[0] &&
-                    sfs.f_fsid.__val[1] == fs->fsid.__val[1]) {
-                    
-                    strcpy(fs->mnt_path, mnt_dir);
-                    fs->found_in_mtab = 1;
-                    break; 
+    // Инициализация локального динамического массива
+    Server *local = NULL;
+    int local_count = 0;
+    int local_capacity = 0;
+
+    // Буфер для чтения строки из CSV (4096 байт обычно достаточно для одной строки лога)
+    char line[4096];
+
+    // Пропускаем заголовок
+    if (!fgets(line, sizeof(line), f)) 
+    {
+        fclose(f);
+        exit(0); // Файл пустой, завершаем работу форка
+    }
+
+    while(fgets(line, sizeof(line), f))
+    {
+        char *token;
+        int col = 0;
+
+        // Разбиваем строку на токены по разделителю
+        token = strtok(line, ";");
+
+        // Начинаем подсчет серверов 
+        while(token != NULL)
+        {
+            // Берем 5 колонку
+            if(col == 4)   
+            {
+                // Выделяем память под имя динамически, чтобы не ограничивать длину в 128 символов
+                char *server = strdup(token);
+                if (server == NULL) 
+                {
+                    perror("Ошибка strdup");
+                    exit(1);
                 }
-            }
-        }
-    }
-    fclose(fp);
-}
 
-int check_if_inside(const char *base, const char *path) {
-    size_t len = strlen(base);
-    if (strncmp(base, path, len) == 0) {
-        if (path[len] == '\0' || path[len] == '/') {
-            return 1;
-        }
-    }
-    return 0;
-}
+                // Убираем кавычки, сдвигаем слово влево (исправлен баг со strlen)
+                if(server[0] == '"')
+                    memmove(server, server + 1, strlen(server) + 1);
 
-void scan_dir(const char *current_path, const char *start_path) {
-    DIR *dir = opendir(current_path);
-    if (!dir) return;
-    if (statfs(current_path, &sfs) == 0) {
-        int is_unique = 1;
+                // Получаем новую длину
+                int len = strlen(server);
 
-        for (int i = 0; i < fs_count; i++) {
-            if (saved_fs[i].fsid.__val[0] == sfs.f_fsid.__val[0] &&
-                saved_fs[i].fsid.__val[1] == sfs.f_fsid.__val[1]) {
-                is_unique = 0;
+                // Если последний символ кавычка, то меняем на пустой символ
+                if(len > 0 && server[len - 1] == '"')
+                    server[len - 1] = '\0';
+
+                // Добавляем или обновляем в локальном динамическом массиве
+                local = add_or_update_server(&local, &local_count, &local_capacity, server, 1);
+                
+                free(server); // Освобождаем временную копию
                 break;
             }
-        }
-
-        if (is_unique && fs_count < 100) {
-            fs_count++;
-            int id = fs_count - 1;
-            
-            saved_fs[id].fsid = sfs.f_fsid;
-            saved_fs[id].type_code = sfs.f_type;
-            saved_fs[id].total_gb = ((double)sfs.f_blocks * sfs.f_bsize) / (1024 * 1024 * 1024);
-            saved_fs[id].free_gb = ((double)sfs.f_bfree * sfs.f_bsize) / (1024 * 1024 * 1024);
-            saved_fs[id].found_in_mtab = 0;
-            saved_fs[id].is_inside = 0;
-
-            find_mount_point(&saved_fs[id]);
-
-            if (saved_fs[id].found_in_mtab) {
-                saved_fs[id].is_inside = check_if_inside(start_path, saved_fs[id].mnt_path);
-            }
+            token = strtok(NULL, ";");
+            col++;
         }
     }
+    fclose(f);
 
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-
-		if (entry->d_type == DT_DIR) {
-			char next_path[PATH_MAX];
-			snprintf(next_path, sizeof(next_path), "%s/%s", current_path, entry->d_name);
-
-			scan_dir(next_path, start_path);
-		}
+    // Поток для результирующего файла + выдача прав
+    int fd = open(result_file, O_RDWR | O_CREAT, 0666);
+    if (fd < 0) 
+    {
+        perror(result_file);
+        exit(1);
     }
-    closedir(dir);
+
+    // Локаем, чтобы форки не перезаписывали данные одновременно
+    flock(fd, LOCK_EX);
+
+    // Открываем файл
+    FILE *res = fdopen(fd, "r+");
+
+    // Инициализация глобального динамического массива
+    Server *global = NULL;
+    int global_count = 0;
+    int global_capacity = 0;
+
+    // Динамический буфер для fscanf, защищающий от переполнения при чтении длинных имен
+    char *name_buf = malloc(4096);
+    int count;
+
+    // Ставим указатель на начало
+    rewind(res);
+
+    // Берем имя и счетчик, переносим их в массив global через функцию слияния
+    // Ограничиваем fscanf чтением максимум 4095 символов во избежание переполнения буфера
+    while(fscanf(res, "%4095s %d", name_buf, &count) == 2)
+    {
+        global = add_or_update_server(&global, &global_count, &global_capacity, name_buf, count);
+    }
+    free(name_buf); // Буфер для чтения больше не нужен
+
+    // Начинаем слияние локальных данных с глобальными
+    for(int i = 0; i < local_count; i++)
+    {
+        global = add_or_update_server(&global, &global_count, &global_capacity, local[i].name, local[i].count);
+    }
+
+    // Идем снова в начало, чтобы перезаписать
+    rewind(res);
+    // Обрезаем файл до 0 байт
+    ftruncate(fd, 0);
+
+    // Проходимся по массиву и записываем все в файл
+    for(int i = 0; i < global_count; i++)
+    {
+        fprintf(res, "%s %d\n", global[i].name, global[i].count);
+    }
+
+    // Сбрасываем данные из памяти в файл
+    fflush(res);
+
+    // Разблокируем файл
+    flock(fd, LOCK_UN);
+    fclose(res);
+
+    // Полное освобождение динамической памяти перед завершением процесса
+    for(int i = 0; i < local_count; i++) free(local[i].name);
+    free(local);
+
+    for(int i = 0; i < global_count; i++) free(global[i].name);
+    free(global);
 }
 
-void print_results() {
-    printf("\n==================================================\n");
-    printf("               РЕЗУЛЬТАТЫ СКАНИРОВАНИЯ            \n");
-    printf("==================================================\n");
-
-    long target_types[] = {0xEF53, 0x01021994, 0x4d44, 0x5346544e, 0x9123683E, 0x58465342};
-    int num_types = sizeof(target_types) / sizeof(target_types[0]);
-
-    for (int t = 0; t <= num_types; t++) {
-        int section_header_printed = 0;
-
-        for (int i = 0; i < fs_count; i++) {
-            int is_match = 0;
-
-            if (t < num_types) {
-                if (saved_fs[i].type_code == target_types[t]) {
-                    is_match = 1;
-                }
-            } else {
-                is_match = 1;
-                for (int k = 0; k < num_types; k++) {
-                    if (saved_fs[i].type_code == target_types[k]) {
-                        is_match = 0;
-                    }
-                }
-            }
-
-            if (is_match) {
-                if (!section_header_printed) {
-                    if (t < num_types) {
-                        printf("\n[ТИП ФС: %s]\n", get_fs_type_name(target_types[t]));
-                    } else {
-                        printf("\n[ТИП ФС: Другие/Неизвестные]\n");
-                    }
-                    printf("--------------------------------------------------\n");
-                    section_header_printed = 1;
-                }
-
-                printf("  FSID              : [%X:%X]\n", saved_fs[i].fsid.__val[0], saved_fs[i].fsid.__val[1]);
-                printf("  Общий объем       : %.2f ГБ\n", saved_fs[i].total_gb);
-                printf("  Свободно          : %.2f ГБ\n", saved_fs[i].free_gb);
-                
-                if (saved_fs[i].found_in_mtab) {
-                    if (saved_fs[i].is_inside) {
-                        printf("  Точка монтирования : %s (ВНУТРИ каталога)\n", saved_fs[i].mnt_path);
-                    } else {
-                        printf("  Точка монтирования : %s (СНАРУЖИ каталога)\n", saved_fs[i].mnt_path);
-                        printf("  Ни одна точка монтирования не лежит внутри заданного каталога.\n");
-                    }
-                } else {
-                    printf("  Точка монтирования : Не найдена в /etc/mtab\n");
-                }
-                printf("\n");
-            }
-        }
-    }
-    printf("==================================================\n");
-}
-
-int main(int argc, char **argv) {
-    if (argc < 2) {
-        printf("Использование: %s <путь_к_каталогу>\n", argv[0]);
+int main(int argc, char *argv[])
+{
+    if(argc < 3)
+    {
+        printf("Usage: %s result.txt logs...\n", argv[0]);
         return 1;
     }
 
-    struct stat st;
-    if (stat(argv[1], &st) != 0) {
-        perror("Ошибка открытия стартового каталога");
-        return 1;
+    char *result_file = argv[1];
+
+    for(int i = 2; i < argc; i++)
+    {
+        pid_t pid = fork();
+
+        if(pid == 0)
+        {
+            process_file(argv[i], result_file);
+            exit(0);
+        }
     }
 
-    start_dev_id = st.st_dev;
+    // Родитель ждет завершения всех процессов
+    while(wait(NULL) > 0);
 
-    printf("Сканирование с каталога: %s\n", argv[1]);
-    scan_dir(argv[1], argv[1]);
-    
-    print_results();
+    printf("Aggregation completed\n");
 
     return 0;
 }

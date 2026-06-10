@@ -6,9 +6,11 @@
       <Unit>
         <Filename Value="selfmadepaint.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <CursorPos X="53" Y="20"/>
         <UsageCount Value="32"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="unit1.pas"/>
@@ -17,8 +19,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="118"/>
+        <TopLine Value="103"/>
         <CursorPos X="28" Y="134"/>
         <UsageCount Value="32"/>
         <Loaded Value="True"/>
@@ -84,8 +85,9 @@
       </Unit>
       <Unit>
         <Filename Value="../lab3/graphs.lpr"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="2"/>
         <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="16">

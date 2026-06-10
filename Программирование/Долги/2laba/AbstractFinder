@@ -1,0 +1,288 @@
+{$mode objfpc}
+program SearchFramework;
+
+
+
+
+uses
+  SysUtils;
+
+type
+  // Динамический массив для хранения данных
+  TDataArray = array of Integer;
+  // Динамический массив для хранения найденных индексов
+  TIndexArray = array of Integer;
+  // Тип функции сравнения: возвращает 0 если равны, <0 если A < B, >0 если A > B
+  TCompareFunc = function(A, B: Integer): Integer;
+
+  // --- БАЗОВЫЙ АБСТРАКТНЫЙ СУПЕРКЛАСС ---
+  TAbstractFinder = class
+  protected
+    FData: TDataArray;
+    FCompFunc: TCompareFunc;
+    FTarget: Integer; // Хранит искомый элемент для беспараметрических методов
+    
+    // Стандартная функция сравнения по умолчанию
+    class function DefaultCompare(A, B: Integer): Integer; static;
+  public
+    constructor Create(const AData: TDataArray); virtual;
+    destructor Destroy; override;
+
+    // Статические и обычные не-абстрактные методы
+    procedure ChangeData(const NewData: TDataArray);
+    procedure SetCompareMethod(AFunc: TCompareFunc);
+    
+    // Поиск ОДНОГО элемента (перегруженные методы)
+    function FindOne: Integer; overload; virtual; abstract; // Без параметров
+    function FindOne(Value: Integer): Integer; overload;
+    function FindOne(Value: Integer; AFunc: TCompareFunc): Integer; overload;
+
+    // Поиск ВСЕХ элементов (перегруженные методы)
+    function FindAll: TIndexArray; overload; virtual; abstract; // Без параметров
+    function FindAll(Value: Integer): TIndexArray; overload;
+    function FindAll(Value: Integer; AFunc: TCompareFunc): TIndexArray; overload;
+
+    // Проверка корректности (для бинарного нужна сортировка, для линейного — всегда True)
+    function IsValid: Boolean; virtual; abstract;
+  end;
+
+  // --- ЛИНЕЙНЫЙ ПОИСК ---
+  TLineFinder = class(TAbstractFinder)
+  public
+    function IsValid: Boolean; override;
+    function FindOne: Integer; override;
+    function FindAll: TIndexArray; override;
+  end;
+
+  // --- БИНАРНЫЙ ПОИСК ---
+  TBinFinder = class(TAbstractFinder)
+  public
+    constructor Create(const AData: TDataArray); override;
+    function IsValid: Boolean; override;
+    function FindOne: Integer; override;
+    function FindAll: TIndexArray; override;
+  end;
+
+{ TAbstractFinder }
+
+constructor TAbstractFinder.Create(const AData: TDataArray);
+begin
+  inherited Create;
+  ChangeData(AData);
+  FCompFunc := @DefaultCompare;
+end;
+
+destructor TAbstractFinder.Destroy;
+begin
+  SetLength(FData, 0);
+  inherited Destroy;
+end;
+
+class function TAbstractFinder.DefaultCompare(A, B: Integer): Integer;
+begin
+  Result := A - B;
+end;
+
+procedure TAbstractFinder.ChangeData(const NewData: TDataArray);
+begin
+  FData := Copy(NewData);
+end;
+
+procedure TAbstractFinder.SetCompareMethod(AFunc: TCompareFunc);
+begin
+  if Assigned(AFunc) then
+    FCompFunc := AFunc
+  else
+    FCompFunc := @DefaultCompare;
+end;
+
+function TAbstractFinder.FindOne(Value: Integer): Integer;
+begin
+  FTarget := Value;
+  Result := FindOne; // Вызов абстрактного метода
+end;
+
+function TAbstractFinder.FindOne(Value: Integer; AFunc: TCompareFunc): Integer;
+var
+  OldFunc: TCompareFunc;
+begin
+  OldFunc := FCompFunc;
+  SetCompareMethod(AFunc);
+  Result := FindOne(Value);
+  FCompFunc := OldFunc; // Восстановление метода
+end;
+
+function TAbstractFinder.FindAll(Value: Integer): TIndexArray;
+begin
+  FTarget := Value;
+  Result := FindAll; // Вызов абстрактного метода
+end;
+
+function TAbstractFinder.FindAll(Value: Integer; AFunc: TCompareFunc): TIndexArray;
+var
+  OldFunc: TCompareFunc;
+begin
+  OldFunc := FCompFunc;
+  SetCompareMethod(AFunc);
+  Result := FindAll(Value);
+  FCompFunc := OldFunc;
+end;
+
+{ TLineFinder }
+
+function TLineFinder.IsValid: Boolean;
+begin
+  Result := True; // Для линейного поиска массив всегда корректен
+end;
+
+function TLineFinder.FindOne: Integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := 0 to High(FData) do
+  begin
+    if FCompFunc(FData[I], FTarget) = 0 then
+    begin
+      Result := I;
+      Exit;
+    end;
+  end;
+end;
+
+function TLineFinder.FindAll: TIndexArray;
+var
+  I: Integer;
+  Count: Integer;
+begin
+  SetLength(Result, Length(FData));
+  Count := 0;
+  for I := 0 to High(FData) do
+  begin
+    if FCompFunc(FData[I], FTarget) = 0 then
+    begin
+      Result[Count] := I;
+      Inc(Count);
+    end;
+  end;
+end;
+
+{ TBinFinder }
+
+constructor TBinFinder.Create(const AData: TDataArray);
+begin
+  inherited Create(AData);
+  if not IsValid then
+    Writeln('Внимание: Переданный массив не отсортирован! Бинарный поиск может работать некорректно.');
+end;
+
+function TBinFinder.IsValid: Boolean;
+var
+  I: Integer;
+  DefaultComp: TCompareFunc;
+begin
+  Result := True;
+  DefaultComp := @DefaultCompare;
+  for I := 0 to High(FData) - 1 do
+  begin
+    if DefaultComp(FData[I], FData[I + 1]) > 0 then
+    begin
+      Result := False;
+      Exit;
+    end;
+  end;
+end;
+
+function TBinFinder.FindOne: Integer;
+var
+  LowIdx, HighIdx, MidIdx, CompRes: Integer;
+begin
+  Result := -1;
+  LowIdx := 0;
+  HighIdx := High(FData);
+
+  while LowIdx <= HighIdx do
+  begin
+    MidIdx := LowIdx + (HighIdx - LowIdx) div 2;
+    CompRes := FCompFunc(FData[MidIdx], FTarget);
+
+    if CompRes = 0 then
+    begin
+      Result := MidIdx;
+      Exit;
+    end;
+    if CompRes < 0 then
+      LowIdx := MidIdx + 1
+    else
+      HighIdx := MidIdx - 1;
+  end;
+end;
+
+function TBinFinder.FindAll: TIndexArray;
+var
+  Idx, Left, Right: Integer;
+  Count: Integer;
+begin
+  SetLength(Result, 0);
+  Idx := FindOne; // Находим любой подходящий элемент бинарным поиском
+  
+  if Idx = -1 then Exit;
+
+  // Разрастаемся влево и вправо для поиска дубликатов (так как массив отсортирован)
+  Left := Idx;
+  while (Left >= 0) and (FCompFunc(FData[Left], FTarget) = 0) do Dec(Left);
+  Inc(Left);
+
+  Right := Idx;
+  while (Right <= High(FData)) and (FCompFunc(FData[Right], FTarget) = 0) do Inc(Right);
+  Dec(Right);
+
+  // Заполняем массив индексов
+  SetLength(Result, Right - Left + 1);
+  Count := 0;
+  for Idx := Left to Right do
+  begin
+    Result[Count] := Idx;
+    Inc(Count);
+  end;
+end;
+
+// --- ТЕСТИРОВАНИЕ ---
+var
+  F: TAbstractFinder;
+  ResOne: Integer;
+  ResAll: TIndexArray;
+  I: Integer;
+begin
+  try
+    Writeln('=== ТЕСТ 1: Линейный поиск ===');
+    F := TLineFinder.Create([1, 4, 2, 3, 2, 1]);
+    
+    ResOne := F.FindOne(2);
+    Writeln('Первое вхождение "2": индекс ', ResOne); // Ожидаем 2
+
+    ResAll := F.FindAll(2);
+    Write('Все вхождения "2": ');
+    for I in ResAll do Write(I, ' '); // Ожидаем 2 4
+    Writeln;
+    F.Free;
+
+    Writeln(#10'=== ТЕСТ 2: Бинарный поиск ===');
+    // Для бинарного поиска передаем отсортированный массив
+    F := TBinFinder.Create([1, 4, 12, 12, 21, 101]);
+    
+    ResOne := F.FindOne(12);
+    Writeln('Вхождение "12": индекс ', ResOne); // Ожидаем 2 или 3
+
+    ResAll := F.FindAll(12);
+    Write('Все вхождения "12": ');
+    for I in ResAll do Write(I, ' '); // Ожидаем 2 3
+    Writeln;
+    F.Free;
+
+    Readln;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end.

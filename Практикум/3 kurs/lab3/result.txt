@@ -1,0 +1,7 @@
+shgpi.edu.ru 3545180
+lib.shgpi.edu.ru 397820
+files.shgpi.edu.ru 209750
+vestnik.shgpi.edu.ru 18570
+irbis.shgpi.edu.ru 7070
+xdsl.shgpi.edu.ru 2560
+welcome.shgpi.edu.ru 5830
