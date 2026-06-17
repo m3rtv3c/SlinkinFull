@@ -6,17 +6,178 @@
       <Unit>
         <Filename Value="absractfinder.lpr"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="AbstractFinderDemo"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="255"/>
-        <CursorPos X="26" Y="8"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="159"/>
+        <CursorPos X="42" Y="174"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="../../../../token не удалять/token"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="2"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../../../../../Рабочий стол/m3rtv3c"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="41"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ppas.sh"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="33" Y="7"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Bash"/>
+      </Unit>
+      <Unit>
+        <Filename Value="../аыфв"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="220"/>
+        <CursorPos X="5" Y="253"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="-1"/>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="265" Column="98" TopLine="252"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="58" Column="67" TopLine="40"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="260" Column="60" TopLine="242"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="18" Column="32"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="283" Column="39" TopLine="263"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="278" Column="52" TopLine="263"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="267" Column="37" TopLine="256"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="231" Column="58" TopLine="223"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="313" Column="4" TopLine="291"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="314" TopLine="278"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="54" Column="48" TopLine="40"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="87" Column="29" TopLine="70"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="89" Column="83" TopLine="23"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="119" Column="45" TopLine="113"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="27" Column="23" TopLine="10"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="182" Column="79" TopLine="169"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="206" Column="17" TopLine="181"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="207" Column="14" TopLine="184"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="291" Column="12" TopLine="284"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="126" Column="19" TopLine="111"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="128" Column="69" TopLine="113"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="27" Column="23" TopLine="16"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="305" Column="49" TopLine="291"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="86" Column="5" TopLine="69"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="230" Column="70" TopLine="212"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="25" Column="88" TopLine="13"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="20" Column="29" TopLine="8"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="305" Column="27" TopLine="291"/>
+      </Position>
+      <Position>
+        <Filename Value="absractfinder.lpr"/>
+        <Caret Line="302" Column="15" TopLine="294"/>
+      </Position>
+    </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes ActiveMode=""/>
+      <Modes ActiveMode="default">
+        <Mode Name="default">
+          <local>
+            <LaunchingApplication Use="True"/>
+          </local>
+        </Mode>
+      </Modes>
     </RunParams>
+    <HistoryLists>
+      <List Name="LaunchingApplication" Type="File" Count="1">
+        <Item1 Value="/usr/bin/xterm -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </List>
+    </HistoryLists>
   </ProjectSession>
 </CONFIG>

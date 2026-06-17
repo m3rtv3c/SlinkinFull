@@ -1,0 +1,254 @@
+{$mode objfpc}
+{$H+}
+
+program AbstractFinderFixed;
+
+uses SysUtils;
+
+type
+  TDataArray = array of integer;
+  TIndexArray = array of integer;
+  TCompareFunc = function(A, B: integer): integer;
+
+{ ===================== BASE ===================== }
+
+TAbstractFinder = class
+protected
+  FData: TDataArray;
+  FTarget: integer;
+  FCompFunc: TCompareFunc;
+
+  class function DefaultCompare(A, B: integer): integer; static;
+
+  function DoFindOne: integer; virtual; abstract;
+  function DoFindAll: TIndexArray; virtual; abstract;
+
+public
+  constructor Create(const AData: array of integer); virtual;
+  destructor Destroy; override;
+
+  { --- STATIC (по ТЗ) --- }
+  class procedure ChangeData(var AData: TDataArray; const NewData: array of integer); static;
+  class procedure SetCompareMethod(var AFunc: TCompareFunc); static;
+
+  class function FindOne(const AData: array of integer; Value: integer;
+    AFunc: TCompareFunc): integer; static;
+
+  class function FindAll(const AData: array of integer; Value: integer;
+    AFunc: TCompareFunc): TIndexArray; static;
+
+  { --- object-level --- }
+  function FindOne(Value: integer): integer; overload;
+  function FindOne(Value: integer; AFunc: TCompareFunc): integer; overload;
+
+  function FindAll(Value: integer): TIndexArray; overload;
+  function FindAll(Value: integer; AFunc: TCompareFunc): TIndexArray; overload;
+
+  function IsValid: boolean; virtual; abstract;
+end;
+
+{ ================= LINEAR ================= }
+
+TLineFinder = class(TAbstractFinder)
+protected
+  function DoFindOne: integer; override;
+  function DoFindAll: TIndexArray; override;
+public
+  function IsValid: boolean; override;
+end;
+
+{ ================= BINARY ================= }
+
+TBinFinder = class(TAbstractFinder)
+protected
+  function DoFindOne: integer; override;
+  function DoFindAll: TIndexArray; override;
+public
+  function IsValid: boolean; override;
+end;
+
+{ ========================================================= }
+{ ================= BASE IMPLEMENTATION ==================== }
+{ ========================================================= }
+
+class function TAbstractFinder.DefaultCompare(A, B: integer): integer;
+begin
+  if A < B then Result := -1
+  else if A > B then Result := 1
+  else Result := 0;
+end;
+
+constructor TAbstractFinder.Create(const AData: array of integer);
+begin
+  inherited Create;
+  FCompFunc := @DefaultCompare;
+
+  SetLength(FData, Length(AData));
+  Move(AData[0], FData[0], Length(AData) * SizeOf(integer));
+end;
+
+destructor TAbstractFinder.Destroy;
+begin
+  SetLength(FData, 0);
+  inherited Destroy;
+end;
+
+{ ---------- STATIC METHODS ---------- }
+
+class procedure TAbstractFinder.ChangeData(var AData: TDataArray; const NewData: array of integer);
+begin
+  SetLength(AData, Length(NewData));
+  Move(NewData[0], AData[0], Length(NewData) * SizeOf(integer));
+end;
+
+class procedure TAbstractFinder.SetCompareMethod(var AFunc: TCompareFunc);
+begin
+  AFunc := @DefaultCompare;
+end;
+
+class function TAbstractFinder.FindOne(const AData: array of integer;
+  Value: integer; AFunc: TCompareFunc): integer;
+var
+  i: integer;
+begin
+  if not Assigned(AFunc) then AFunc := @DefaultCompare;
+
+  for i := 0 to High(AData) do
+    if AFunc(AData[i], Value) = 0 then Exit(i);
+
+  Result := -1;
+end;
+
+class function TAbstractFinder.FindAll(const AData: array of integer;
+  Value: integer; AFunc: TCompareFunc): TIndexArray;
+var
+  i, c: integer;
+begin
+  if not Assigned(AFunc) then AFunc := @DefaultCompare;
+
+  SetLength(Result, Length(AData));
+  c := 0;
+
+  for i := 0 to High(AData) do
+    if AFunc(AData[i], Value) = 0 then
+    begin
+      Result[c] := i;
+      Inc(c);
+    end;
+
+  SetLength(Result, c);
+end;
+
+{ ---------- OBJECT METHODS ---------- }
+
+function TAbstractFinder.FindOne(Value: integer): integer;
+begin
+  FTarget := Value;
+  Result := DoFindOne;
+end;
+
+function TAbstractFinder.FindOne(Value: integer; AFunc: TCompareFunc): integer;
+begin
+  FCompFunc := AFunc;
+  Result := FindOne(Value);
+end;
+
+function TAbstractFinder.FindAll(Value: integer): TIndexArray;
+begin
+  FTarget := Value;
+  Result := DoFindAll;
+end;
+
+function TAbstractFinder.FindAll(Value: integer; AFunc: TCompareFunc): TIndexArray;
+begin
+  FCompFunc := AFunc;
+  Result := FindAll(Value);
+end;
+
+{ ========================================================= }
+{ ================= LINEAR IMPLEMENTATION ================== }
+{ ========================================================= }
+
+function TLineFinder.IsValid: boolean;
+begin
+  Result := True;
+end;
+
+function TLineFinder.DoFindOne: integer;
+var i: integer;
+begin
+  Result := -1;
+  for i := 0 to High(FData) do
+    if FCompFunc(FData[i], FTarget) = 0 then Exit(i);
+end;
+
+function TLineFinder.DoFindAll: TIndexArray;
+var i, c: integer;
+begin
+  SetLength(Result, Length(FData));
+  c := 0;
+
+  for i := 0 to High(FData) do
+    if FCompFunc(FData[i], FTarget) = 0 then
+    begin
+      Result[c] := i;
+      Inc(c);
+    end;
+
+  SetLength(Result, c);
+end;
+
+{ ========================================================= }
+{ ================= BINARY IMPLEMENTATION ================== }
+{ ========================================================= }
+
+function TBinFinder.IsValid: boolean;
+var i: integer;
+begin
+  for i := 0 to High(FData) - 1 do
+    if FCompFunc(FData[i], FData[i + 1]) > 0 then
+      Exit(False);
+  Result := True;
+end;
+
+function TBinFinder.DoFindOne: integer;
+var l, r, m, c: integer;
+begin
+  l := 0;
+  r := High(FData);
+
+  while l <= r do
+  begin
+    m := (l + r) div 2;
+    c := FCompFunc(FData[m], FTarget);
+
+    if c = 0 then Exit(m)
+    else if c < 0 then l := m + 1
+    else r := m - 1;
+  end;
+
+  Result := -1;
+end;
+
+function TBinFinder.DoFindAll: TIndexArray;
+var idx, l, r, i, c: integer;
+begin
+  idx := DoFindOne;
+  if idx = -1 then Exit(nil);
+
+  l := idx;
+  while (l > 0) and (FCompFunc(FData[l - 1], FTarget) = 0) do Dec(l);
+
+  r := idx;
+  while (r < High(FData)) and (FCompFunc(FData[r + 1], FTarget) = 0) do Inc(r);
+
+  SetLength(Result, r - l + 1);
+
+  c := 0;
+  for i := l to r do
+  begin
+    Result[c] := i;
+    Inc(c);
+  end;
+end;
+

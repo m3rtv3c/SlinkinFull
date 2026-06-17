@@ -25,6 +25,7 @@
       <Unit>
         <Filename Value="absractfinder.lpr"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="AbstractFinderDemo"/>
       </Unit>
     </Units>
   </ProjectOptions>
